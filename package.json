@@ -1,8 +1,10 @@
 {
   "dependencies": {
+    "connect-mongo": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "express": "^5.1.0",
-    "express-sessions": "^1.0.6",
+    "express-handlebars": "^8.0.1",
+    "express-session": "^1.18.2",
     "mongodb": "^7.0.0",
     "mongoose": "^9.0.0"
   },
