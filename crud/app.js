@@ -3,7 +3,8 @@ import {engine} from "express-handlebars"
 import usersRouter from "./src/routes/usersRouter.js"
 import mongoConnect from "./database/mongoConnection.js"
 import sessionsRouter from "./src/routes/sessionsRouter.js"
-import viewsRouter from "./routes/viewsRouter.js"
+import viewsRouter from "./src/routes/viewsRouter.js"
+import { serverRoot } from "./utils.js"
 //cookie-parser
 import cookieParser from "cookie-parser"
 //mongo
@@ -18,31 +19,32 @@ const PORT = 8080
 
 app.engine("handlebars", engine())
 app.set("view engine", "handlebars");
-app.set("views", serverRoot + "/public")
+app.set("views", serverRoot + "/src/views")
 
 app.use(json())
 app.use(express.json())
 app.use(urlencoded({ extended: true }))
 
-app.use("/api/users", usersRouter);
-app.use("/api/sessions", sessionsRouter)
-app.use("/", viewsRouter)
-
 //USAR COOKIE PARSER
 app.use(cookieParser("secretodecookie"));
-// ESCONDER LOS DATOS DE LAS COOKIES
+
+// ESCONDER LOS DATOS DE LAS COOKIES - MUST BE BEFORE ROUTES
 app.use(session({
     store: new MongoStore({
         autoRemove: "interval",
         autoRemoveInterval: 1,
         mongoUrl: "mongodb://localhost:27017/El-bar-del-Fondo",
-        ttl: 10
+        ttl: 60 * 60 * 24 // 24 hours in seconds
     }),
     secret: "secretodecookie", 
     resave: true,
     saveUninitialized: true,
-    cookie:{ maxAge:1000*60}
+    cookie:{ maxAge:1000*60*60*24} // 24 hours
 }))
+
+app.use("/api/users", usersRouter);
+app.use("/api/sessions", sessionsRouter)
+app.use("/", viewsRouter)
 
 app.post("/session", async (req, res) => {
     req.session.user = req.body

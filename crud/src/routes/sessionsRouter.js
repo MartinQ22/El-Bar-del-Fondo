@@ -1,35 +1,48 @@
 import { Router, urlencoded } from "express"
 import { userModel } from "../models/usersModel.js";
+import { isValidPassword, createHash } from "../../utils.js";
 
 const router = Router();
 
 router.use(urlencoded({extended: true}))
 
 router.post("/register", async (req,res, next) => {
-  const user = req.body
+  const {first_name, last_name, email, password} = req.body
   
       try {
         if(req.session.user){
-            req.redirect("/profile")
+            return res.redirect("/profile")
         }
-          let users = await userModel.create(user)
-          res.json(users);
+        const hashedPassword = createHash(password)
+        let users = await userModel.create({
+          first_name,
+          last_name,
+          email,
+          password: hashedPassword
+        })
+        res.json(users);
       } catch (error) {
           console.log(error.message);
+          res.status(500).json({message: "Error al registrar usuario", error: error.message})
       }
 })
 
 router.post("/login", async (req,res, next) => {
     const {email, password} = req.body;
     try {
-        const user = await userModel.findOne({email, password})
-        if(user){
-            req.session.user = user;
-            res.redirect("/profile")
+        const user = await userModel.findOne({email})
+        if(!user){
+            return res.status(401).json({message: "Usuario no encontrado"})
+        }
+        if(isValidPassword(password, user.password)){
+          req.session.user = user
+          res.status(200).redirect("/profile")
+        }else{
+            res.status(403).json({message: "No se puede loguear, intentelo nuevamente"})
         }
     } catch (error) {
         console.log(error.message);
-
+        res.status(500).json({message: "Error en el servidor"})
     }
 })
 

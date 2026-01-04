@@ -1,8 +1,16 @@
 function handleSession(req, res, next) {
     if (req.session.user){
-        res.redirect("/profile")
-    } else{
         next()
+    } else{
+        res.redirect("/login")
+    }
+}
+
+export function avoidLoginView(req,res, next) {
+    if (!req.session.user) {
+        next()
+    } else {
+        res.redirect()
     }
 }
 

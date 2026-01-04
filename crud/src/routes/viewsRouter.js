@@ -4,16 +4,16 @@ import handleSession from "../middlewares/sessions.middlewares.js";
 
 const router = Router();
 
-router.get("login", handleSession, async (res, req, next) => {
-    res.render("login,handlebars")
+router.get("/login", handleSession, async (req, res, next) => {
+    res.render("login")
 })
 
 router.get("/profile", async (req, res, next) => {
     if(!req.session.user){
-        res.redirect("/login")
+        return res.redirect("/login")
     }
     const {first_name, last_name, email} = req.session.user;
-    req.render("profile.handlebars", {
+    res.render("profile", {
         first_name, last_name, email
     })
 })

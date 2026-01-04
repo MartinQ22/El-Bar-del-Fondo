@@ -1,12 +1,27 @@
-import { Router } from "express";
+import { Router, json, urlencoded } from "express";
 import { userModel } from "../models/usersModel.js";
+import { createHash } from "../../utils.js";
+
 
 const router = Router();
+router.use(json())
+router.use(urlencoded({extended: true}))
 
 router.get("/read", async (req,res) => {
     try {
         let users = await userModel.find()
         res.json(users);
+    } catch (error) {
+        console.log(error.message);
+    }
+})
+
+router.post("/register", async (req, res) => {
+    try {
+        const {first_name, last_name, email, password } = req.body;
+        const newUser = await userModel.create({first_name, last_name, email, password: createHash(password)})
+
+        res.json(newUser)
     } catch (error) {
         console.log(error.message);
     }
