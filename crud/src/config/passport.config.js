@@ -1,10 +1,12 @@
 import passport from "passport";
-import { Strategy as LocalStategy } from "passport-local";
+import { Strategy as LocalStrategy } from "passport-local";
 import { userModel } from "../models/usersModel.js";
-import { createHash, isValidPassword } from "../../utils";
+import {Strategy as GitHubStrategy } from "passport-github2";
+import { Strategy as JWTStrategy, ExtractJwt } from "passport-jwt" ;
+import { createHash, isValidPassword } from "../../utils.js";
 
 export function initializePassport() {
-
+//ESTRATEGIA DE REGISTRO LOCAL
     passport.use("register", new LocalStrategy({
         passReqToCallback: true,
         usernameField: "email",
@@ -17,11 +19,15 @@ export function initializePassport() {
                 const newUser = await userModel.create({ ...req.body, password });
                 done(null, newUser);
             } catch (error) {
+                // Handle duplicate key error
+                if(error.code === 11000){
+                    return done(null, false, {message: "El email ya está registrado"});
+                }
                 done(error, null)
             }
         }));
 
-
+//ESTRATEGIA DE LOGIN LOCAL
     passport.use("login", new LocalStrategy({
         usernameField: "email",
         passwordField: "password",
@@ -30,12 +36,13 @@ export function initializePassport() {
         async (username, password, done) => {
             try {
                 const user = await userModel.findOne({email: username});
-                if(user){
-                    if(isValidPassword(password, user.password)){
-                        done(null, user);
-                    }else{
-                        done(null, false);
-                    }
+                if(!user){
+                    return done(null, false);
+                }
+                if(isValidPassword(password, user.password)){
+                    done(null, user);
+                }else{
+                    done(null, false);
                 }
             } catch (error) {
                 done(error, null)
@@ -48,8 +55,60 @@ export function initializePassport() {
     });
 
     passport.deserializeUser(async (id, done) => {
-        const user = userModel.findById(id);
+        const user = await userModel.findById(id);
         done(null, user);
     });
+//Estrategia para terceros GitHub
+    passport.use("github", new GitHubStrategy({
+        clientID: "Iv23liqAbZ6HS49VfSOJ",
+        clientSecret: "80c2c4fce5fc13291a89a11dfb702c1f775f022f",
+        callbackURL: "http://localhost:8080/api/sessions/login"
+    }, async (accessToken, refreshToken, profile, done) => {
+        try {
+            const { username } = profile;
 
+            const user = await userModel.create({ username });
+            if(!user){
+                const newUser = await userModel.create({ username })
+                return done(null, newUser.toJSON())
+            }
+        } catch (error) {
+            return done(null, user.toJSON())
+        }
+    }))
+
+//Estrategia para JWT
+    passport.use("jwt", new JWTStrategy({
+       jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]),
+       secretOrKey: "JWT secreto"
+    },
+    async (payload, done) => {
+        try {
+            console.log(payload);
+            return done(null, payload);
+        } catch (error) {
+            return done(error, null);
+        }
+    }));
+
+}
+
+function cookieExtractor(req) {
+    if (req && req.cookies) {
+        return req.cookies.jwt
+    }
+}
+
+//CALLBACK PERSONALIZADO jwt
+export function passportCall() {
+    return async (req, res, next) => {
+        passport.authenticate("jwt", (err, user, info)=>{
+            if(err) return next(err)
+                if(!user){
+                    return res.status(401).json({error: info.toString()})
+                }
+                req.user = user;
+                next()
+        })(req, res, next)
+    }
 }

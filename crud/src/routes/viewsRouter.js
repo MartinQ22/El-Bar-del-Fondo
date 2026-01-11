@@ -4,17 +4,22 @@ import handleSession from "../middlewares/sessions.middlewares.js";
 
 const router = Router();
 
-router.get("/login", handleSession, async (req, res, next) => {
-    res.render("login")
+//estrategia de passport jwt com,o middleware
+// router.use(passport.authenticate("jwt", { session:false }));
+
+router.get("login", handleSession, async (res, req, next) => {
+    res.render("login,handlebars")
 })
 
 router.get("/profile", async (req, res, next) => {
     if(!req.session.user){
-        return res.redirect("/login")
+        res.redirect("/login")
     }
     const {first_name, last_name, email} = req.session.user;
-    res.render("profile", {
+    req.render("profile.handlebars", {
         first_name, last_name, email
     })
 })
+
+
 export default router

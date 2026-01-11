@@ -9,7 +9,9 @@ import { serverRoot } from "./utils.js"
 import cookieParser from "cookie-parser"
 //mongo
 import MongoStore from "connect-mongo"
-
+//PASSPORT
+import passport from "passport"
+import { initializePassport } from "./src/config/passport.config.js"
 
 //EXPRESS-SESSIONS
 import session from "express-session"
@@ -28,7 +30,7 @@ app.use(urlencoded({ extended: true }))
 //USAR COOKIE PARSER
 app.use(cookieParser("secretodecookie"));
 
-// ESCONDER LOS DATOS DE LAS COOKIES - MUST BE BEFORE ROUTES
+// ESCONDER LOS DATOS DE LAS COOKIES - MUST BE BEFORE PASSPORT
 app.use(session({
     store: new MongoStore({
         autoRemove: "interval",
@@ -41,6 +43,11 @@ app.use(session({
     saveUninitialized: true,
     cookie:{ maxAge:1000*60*60*24} // 24 hours
 }))
+
+//CONFIGURACION DE PASSPORT - MUST BE AFTER SESSION
+initializePassport();
+app.use(passport.initialize())
+app.use(passport.session())
 
 app.use("/api/users", usersRouter);
 app.use("/api/sessions", sessionsRouter)
