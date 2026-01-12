@@ -1,4 +1,5 @@
 import { Router, urlencoded } from "express"
+import passport from "passport"
 import { userModel } from "../models/usersModel.js";
 import { isValidPassword, createHash } from "../../utils.js";
 
@@ -46,5 +47,15 @@ router.post("/login", async (req,res, next) => {
     }
 })
 
+// GitHub OAuth routes
+router.get("/github", passport.authenticate("github", { scope: ["user:email"] }))
+
+router.get("/githubcallback", 
+    passport.authenticate("github", { failureRedirect: "/login" }),
+    async (req, res) => {
+        req.session.user = req.user;
+        res.redirect("/profile");
+    }
+)
 
 export default router

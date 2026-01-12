@@ -62,18 +62,40 @@ export function initializePassport() {
     passport.use("github", new GitHubStrategy({
         clientID: "Iv23liqAbZ6HS49VfSOJ",
         clientSecret: "80c2c4fce5fc13291a89a11dfb702c1f775f022f",
-        callbackURL: "http://localhost:8080/api/sessions/login"
+        callbackURL: "http://localhost:8080/api/sessions/githubcallback"
     }, async (accessToken, refreshToken, profile, done) => {
         try {
-            const { username } = profile;
-
-            const user = await userModel.create({ username });
+            const email = profile.emails?.[0]?.value || `${profile.username}@github.com`;
+            
+            // Check if user already exists
+            let user = await userModel.findOne({ email });
+            
             if(!user){
-                const newUser = await userModel.create({ username })
-                return done(null, newUser.toJSON())
+                // Split displayName for first_name and last_name
+                const nameParts = (profile.displayName || profile.username).split(' ');
+                const first_name = nameParts[0] || profile.username;
+                const last_name = nameParts.slice(1).join(' ') || 'GitHub User';
+                
+                // Create new user with all required fields
+                user = await userModel.create({ 
+                    first_name,
+                    last_name,
+                    email,
+                    password: createHash(accessToken) // Use accessToken as password (hashed)
+                });
             }
+            return done(null, user.toJSON());
         } catch (error) {
-            return done(null, user.toJSON())
+            // Handle duplicate key error
+            if(error.code === 11000){
+                // User already exists, try to find them
+                const email = profile.emails?.[0]?.value || `${profile.username}@github.com`;
+                const user = await userModel.findOne({ email });
+                if(user){
+                    return done(null, user.toJSON());
+                }
+            }
+            return done(error, null);
         }
     }))
 
@@ -99,7 +121,7 @@ function cookieExtractor(req) {
     }
 }
 
-//CALLBACK PERSONALIZADO jwt
+//CALLBACK PERSONALIZADO
 export function passportCall() {
     return async (req, res, next) => {
         passport.authenticate("jwt", (err, user, info)=>{

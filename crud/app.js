@@ -19,9 +19,15 @@ import session from "express-session"
 const app = express()
 const PORT = 8080
 
-app.engine("handlebars", engine())
+app.engine("handlebars", engine({
+    defaultLayout: "main",
+    layoutsDir: serverRoot + "/src/views/layouts"
+}))
 app.set("view engine", "handlebars");
 app.set("views", serverRoot + "/src/views")
+
+// Serve static files (CSS, JS, images, etc.)
+app.use(express.static(serverRoot + "/public"))
 
 app.use(json())
 app.use(express.json())
