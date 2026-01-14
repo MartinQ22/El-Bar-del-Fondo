@@ -1,11 +1,9 @@
 import { Router, json, urlencoded } from "express";
 import { userModel } from "../models/usersModel.js";
-import { createHash } from "../../utils.js";
+// import { createHash } from "../../utils.js";
 import passport from "passport";
 
-
 const router = Router();
-
 
 router.get("/read", async (req,res) => {
     try {
@@ -70,5 +68,12 @@ router.delete("/delete", async (req,res) => {
         console.log(error.message);
     }
 });
+
+//Ruta de error generico 
+router.use((req, res)=>{
+    res.status(404).send("404 - La ruta no se encuentra")
+})
+
+//-+-+-+-+-+-+-+-+-+-+ IMPLEMENTAR RAGEEXP PARA RESTRINGIR MAYUSCULAS O MINUSCULAS
 
 export default router

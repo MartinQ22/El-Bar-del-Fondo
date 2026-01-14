@@ -1,4 +1,4 @@
-import express,{ json, urlencoded } from "express"
+import express,{ json, urlencoded, } from "express"
 import {engine} from "express-handlebars"
 import usersRouter from "./src/routes/usersRouter.js"
 import mongoConnect from "./database/mongoConnection.js"
@@ -11,13 +11,17 @@ import cookieParser from "cookie-parser"
 import MongoStore from "connect-mongo"
 //PASSPORT
 import passport from "passport"
+//DOTENV
+import { env } from "./src/config/enviroment.js"
 import { initializePassport } from "./src/config/passport.config.js"
 
 //EXPRESS-SESSIONS
 import session from "express-session"
 
+// config()
 const app = express()
-const PORT = 8080
+// const PORT = 8080
+const PORT = env.PORT
 
 app.engine("handlebars", engine({
     defaultLayout: "main",
@@ -42,15 +46,15 @@ app.use(session({
         autoRemove: "interval",
         autoRemoveInterval: 1,
         mongoUrl: "mongodb://localhost:27017/El-bar-del-Fondo",
-        ttl: 60 * 60 * 24 // 24 hours in seconds
+        ttl: 60 * 60 * 24 // 24 Horass
     }),
     secret: "secretodecookie", 
     resave: true,
     saveUninitialized: true,
-    cookie:{ maxAge:1000*60*60*24} // 24 hours
+    cookie:{ maxAge:1000*60*60*24} // 24 Horass
 }))
 
-//CONFIGURACION DE PASSPORT - MUST BE AFTER SESSION
+//CONFIGURACION DE PASSPORT 
 initializePassport();
 app.use(passport.initialize())
 app.use(passport.session())
@@ -58,15 +62,6 @@ app.use(passport.session())
 app.use("/api/users", usersRouter);
 app.use("/api/sessions", sessionsRouter)
 app.use("/", viewsRouter)
-
-app.post("/session", async (req, res) => {
-    req.session.user = req.body
-})
-
-app.get("/session", async (req, res) => {
-    res.json(req.session.user)
-})
-
 
 //ENDPOINT DE PRUEBA PARA SETEAR Y VER COOKIES
 app.get("/set-cookie",  async (req, res) => {
@@ -80,11 +75,6 @@ app.get("/get-cookie", async (req, res) => {
     res.send(req.cookies);
 })
 
-// Handle favicon requests to prevent 404 errors
-app.get('/favicon.ico', (req, res) => {
-    res.status(204).end();
-})
-
 // app.get("/login", (req, res) => {
 //     const { user, password } = req.query
 //     if (user !== "coder" || password !== "house") {
@@ -96,8 +86,14 @@ app.get('/favicon.ico', (req, res) => {
 //     }
 // })
 
+app.post("/session", async (req, res) => {
+   req.session.user = req.body
+ })
+
+ app.get("/session", async (req, res) => {
+    res.json(req.session.user)
+ })
+
 app.listen(PORT, ()=> {
-    console.log(`El servidor utiliza el port ${PORT}`)
     mongoConnect().then(()=>console.log("Base de datos conectada"));
-    
 })

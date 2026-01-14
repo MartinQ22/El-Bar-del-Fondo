@@ -47,7 +47,7 @@ router.post("/login", async (req,res, next) => {
     }
 })
 
-// GitHub OAuth routes
+//Rutas de autenticacion GitHubb
 router.get("/github", passport.authenticate("github", { scope: ["user:email"] }))
 
 router.get("/githubcallback", 
@@ -57,5 +57,10 @@ router.get("/githubcallback",
         res.redirect("/profile");
     }
 )
+
+//Ruta de error generico 
+router.use((req, res)=>{
+    res.status(404).send("404 - La ruta no se encuentra")
+})
 
 export default router

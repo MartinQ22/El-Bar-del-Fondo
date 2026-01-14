@@ -4,6 +4,7 @@ import { userModel } from "../models/usersModel.js";
 import {Strategy as GitHubStrategy } from "passport-github2";
 import { Strategy as JWTStrategy, ExtractJwt } from "passport-jwt" ;
 import { createHash, isValidPassword } from "../../utils.js";
+import { env } from "./enviroment.js";
 
 export function initializePassport() {
 //ESTRATEGIA DE REGISTRO LOCAL
@@ -19,7 +20,7 @@ export function initializePassport() {
                 const newUser = await userModel.create({ ...req.body, password });
                 done(null, newUser);
             } catch (error) {
-                // Handle duplicate key error
+                // Codigo para controlar duplicadoss
                 if(error.code === 11000){
                     return done(null, false, {message: "El email ya está registrado"});
                 }
@@ -67,28 +68,25 @@ export function initializePassport() {
         try {
             const email = profile.emails?.[0]?.value || `${profile.username}@github.com`;
             
-            // Check if user already exists
+            // Check si el usuario existe
             let user = await userModel.findOne({ email });
             
             if(!user){
-                // Split displayName for first_name and last_name
                 const nameParts = (profile.displayName || profile.username).split(' ');
                 const first_name = nameParts[0] || profile.username;
                 const last_name = nameParts.slice(1).join(' ') || 'GitHub User';
                 
-                // Create new user with all required fields
                 user = await userModel.create({ 
                     first_name,
                     last_name,
                     email,
-                    password: createHash(accessToken) // Use accessToken as password (hashed)
+                    password: createHash(accessToken) 
                 });
             }
             return done(null, user.toJSON());
         } catch (error) {
-            // Handle duplicate key error
             if(error.code === 11000){
-                // User already exists, try to find them
+                // busca si el usuario existe 
                 const email = profile.emails?.[0]?.value || `${profile.username}@github.com`;
                 const user = await userModel.findOne({ email });
                 if(user){
@@ -102,7 +100,8 @@ export function initializePassport() {
 //Estrategia para JWT
     passport.use("jwt", new JWTStrategy({
        jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]),
-       secretOrKey: "JWT secreto"
+    //    secretOrKey: "JWT secreto"
+        secretOrKey: env.JWT_SECRET
     },
     async (payload, done) => {
         try {
