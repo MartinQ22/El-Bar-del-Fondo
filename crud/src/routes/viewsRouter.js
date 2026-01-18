@@ -20,8 +20,8 @@ router.get('/register', avoidLoginView, (req, res) => {
     res.render('register');
 });
 
-// Home
-router.get("/", async(req,res) => {
+// Home - requires authentication
+router.get("/", handleSession, async(req,res) => {
     try {
         const { limit = 10, page = 1 } = req.query;
         const data = await Product.paginate({}, { limit, page, lean: true });
@@ -40,8 +40,8 @@ router.get("/", async(req,res) => {
     }
 })
 
-// Product Detail 
-router.get("/product/:pid", async(req,res) => {
+// Product Detail - requires authentication
+router.get("/product/:pid", handleSession, async(req,res) => {
     try {
         const { pid } = req.params;
         const product = await Product.findById(pid).lean();
