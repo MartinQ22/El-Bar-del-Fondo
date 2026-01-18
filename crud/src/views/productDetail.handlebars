@@ -1,0 +1,49 @@
+{{!-- Pagina de producto Detail --}}
+<div class="product-detail-container">
+    <header class="detail-header">
+        <a href="/" class="back-button">← Volver a productos</a>
+        <h1 class="detail-title">Detalle del Producto</h1>
+    </header>
+    
+    <div class="product-detail-card">
+        <div class="product-image-section">
+            <img class="product-detail-image" src="{{product.thumbnail}}" alt="{{product.title}}">
+        </div>
+        
+        <div class="product-info-section">
+            <h2 class="product-detail-title">{{product.title}}</h2>
+            
+            <div class="product-detail-price">
+                <span class="price-label">Precio:</span>
+                <span class="price-value">${{product.price}}</span>
+            </div>
+            
+            <div class="product-detail-category">
+                <span class="category-label">Categoría:</span>
+                <span class="category-value">{{product.category}}</span>
+            </div>
+            
+            <div class="product-detail-description">
+                <h3 class="description-title">Descripción:</h3>
+                <p class="description-text">{{product.description}}</p>
+            </div>
+            
+            <div class="product-detail-meta">
+                <div class="meta-item">
+                    <span class="meta-label">Stock:</span>
+                    <span class="meta-value">{{product.stock}} unidades</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Código:</span>
+                    <span class="meta-value">{{product.code}}</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Estado:</span>
+                    <span class="status-badge {{#if product.status}}status-active{{else}}status-inactive{{/if}}">
+                        {{#if product.status}}Disponible{{else}}No disponible{{/if}}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

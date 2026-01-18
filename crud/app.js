@@ -1,7 +1,9 @@
 import express,{ json, urlencoded, } from "express"
 import {engine} from "express-handlebars"
-import usersRouter from "./src/routes/usersRouter.js"
 import mongoConnect from "./database/mongoConnection.js"
+import usersRouter from "./src/routes/usersRouter.js"
+import productsRouter from "./src/routes/productsRouter.js"
+import cartRouter from "./src/routes/cartRouter.js";
 import sessionsRouter from "./src/routes/sessionsRouter.js"
 import viewsRouter from "./src/routes/viewsRouter.js"
 import { serverRoot } from "./utils.js"
@@ -14,7 +16,8 @@ import passport from "passport"
 //DOTENV
 import { env } from "./src/config/enviroment.js"
 import { initializePassport } from "./src/config/passport.config.js"
-
+//HTTP
+import http from "http";
 //EXPRESS-SESSIONS
 import session from "express-session"
 
@@ -22,7 +25,9 @@ import session from "express-session"
 const app = express()
 // const PORT = 8080
 const PORT = env.PORT
+const server = http.createServer(app);
 
+//HandleBars Config
 app.engine("handlebars", engine({
     defaultLayout: "main",
     layoutsDir: serverRoot + "/src/views/layouts"
@@ -59,9 +64,12 @@ initializePassport();
 app.use(passport.initialize())
 app.use(passport.session())
 
+//Endpoints Handlers
 app.use("/api/users", usersRouter);
 app.use("/api/sessions", sessionsRouter)
 app.use("/", viewsRouter)
+app.use("/api/carts", cartRouter);
+app.use("/api/products", productsRouter);
 
 //ENDPOINT DE PRUEBA PARA SETEAR Y VER COOKIES
 app.get("/set-cookie",  async (req, res) => {
@@ -75,17 +83,6 @@ app.get("/get-cookie", async (req, res) => {
     res.send(req.cookies);
 })
 
-// app.get("/login", (req, res) => {
-//     const { user, password } = req.query
-//     if (user !== "coder" || password !== "house") {
-//         res.send("Nombre de usuario o contraseña Incorrecto")
-//     } else {
-//         req.session.user = user
-//         req.session.admin = true
-//         res.send("Login OK")
-//     }
-// })
-
 app.post("/session", async (req, res) => {
    req.session.user = req.body
  })
@@ -94,6 +91,6 @@ app.post("/session", async (req, res) => {
     res.json(req.session.user)
  })
 
-app.listen(PORT, ()=> {
+server.listen(PORT, ()=> {
     mongoConnect().then(()=>console.log("Base de datos conectada"));
 })
