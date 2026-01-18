@@ -40,7 +40,7 @@ app.use(urlencoded({ extended: true }))
 //USAR COOKIE PARSER
 app.use(cookieParser("secretodecookie"));
 
-// ESCONDER LOS DATOS DE LAS COOKIES - MUST BE BEFORE PASSPORT
+// ESCONDER LOS DATOS DE LAS COOKIES - RECORDARME PONERLO ANTES DE PASSPORT
 app.use(session({
     store: new MongoStore({
         autoRemove: "interval",

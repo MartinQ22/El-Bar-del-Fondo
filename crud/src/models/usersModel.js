@@ -1,3 +1,4 @@
+import { hash } from "bcrypt";
 import mongoose from "mongoose";
 
 const usersSchema = new mongoose.Schema({
@@ -14,10 +15,13 @@ const usersSchema = new mongoose.Schema({
         unique: true,
         required: true
     },
+    age: { type: Number,
+         required: true },
     password: {
         type: String,
-        required: true
+        required: true,
     }, 
+    role: { type: String, default: 'user' }
 })
 
 export const userModel = mongoose.model("user", usersSchema);

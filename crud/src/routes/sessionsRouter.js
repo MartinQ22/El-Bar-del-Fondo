@@ -8,7 +8,7 @@ const router = Router();
 router.use(urlencoded({extended: true}))
 
 router.post("/register", async (req,res, next) => {
-  const {first_name, last_name, email, password} = req.body
+  const {first_name, last_name, email,age, password} = req.body
   
       try {
         if(req.session.user){
@@ -19,7 +19,9 @@ router.post("/register", async (req,res, next) => {
           first_name,
           last_name,
           email,
-          password: hashedPassword
+          age,
+          password: hashedPassword,
+          role:"user"
         })
         res.json(users);
       } catch (error) {
