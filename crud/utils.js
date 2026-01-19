@@ -2,6 +2,7 @@ import { dirname } from "path";
 import { fileURLToPath } from "url";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { env } from "./src/config/enviroment.js";
 
 // ENCRIPTACION BRCYPT
 export function createHash (password) {
@@ -13,11 +14,11 @@ export function isValidPassword(password, hashedPassword) {
 }
 //JSON WEB TOKENS
 export function generateToken(payload) {
-    return jwt.sign(payload, "screto jwt")
+    return jwt.sign(payload, env.JWT_SECRET || "screto jwt")
 }
 
 export function verifyToken(token) {
-    return jwt.verify(token, "screto jwt")
+    return jwt.verify(token, env.JWT_SECRET || "screto jwt")
 }
 //TESTING
 

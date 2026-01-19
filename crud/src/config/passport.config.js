@@ -112,12 +112,34 @@ export function initializePassport() {
         }
     }));
 
+//Estrategia "current" para extraer token de cookie y obtener usuario asociado
+    passport.use("current", new JWTStrategy({
+        jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]),
+        secretOrKey: env.JWT_SECRET
+    },
+    async (payload, done) => {
+        try {
+            // Buscar el usuario en la base de datos usando el ID del payload
+            const user = await userModel.findById(payload.id || payload._id);
+            
+            if (!user) {
+                return done(null, false, { message: "Usuario no encontrado" });
+            }
+            
+            // Retornar el usuario completo
+            return done(null, user);
+        } catch (error) {
+            return done(error, null);
+        }
+    }));
+
 }
 
-function cookieExtractor(req) {
+export function cookieExtractor(req) {
     if (req && req.cookies) {
-        return req.cookies.jwt
+        return req.cookies.jwt;
     }
+    return null;
 }
 
 //CALLBACK PERSONALIZADO

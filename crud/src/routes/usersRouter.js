@@ -74,6 +74,6 @@ router.use((req, res)=>{
     res.status(404).send("404 - La ruta no se encuentra")
 })
 
-//-+-+-+-+-+-+-+-+-+-+ IMPLEMENTAR RAGEEXP PARA RESTRINGIR MAYUSCULAS O MINUSCULAS
+//-+-+-+-+-+-+-+-+-+-+ RECORDARME IMPLEMENTAR RAGEEXP PARA RESTRINGIR MAYUSCULAS O MINUSCULAS ANTES DE LA ENTREGA FINAL
 
 export default router
