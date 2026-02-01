@@ -1,4 +1,4 @@
-import { hash } from "bcrypt";
+
 import mongoose from "mongoose";
 
 const usersSchema = new mongoose.Schema({
@@ -10,20 +10,21 @@ const usersSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    email : {
+    email: {
         type: String,
         unique: true,
         required: true
     },
-    age: { 
+    age: {
         type: Number,
-         required: true },
+        required: true
+    },
     password: {
         type: String,
         required: true,
     },
     cart: {
-        type: mongoose.Schema.Types.ObjectId, 
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'carts'
     },
     role: { type: String, default: 'user' }

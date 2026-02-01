@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { env } from "../src/config/enviroment.js";
 
 // async function mongoConnection(){
 //     await mongoose.connect("mongodb://localhost:27017/El-bar-del-Fondo")
@@ -11,6 +10,10 @@ async function mongoConnection(){
 
 // async function mongoConnection(){
 //     await mongoose.connect("mongodb+srv://MartinUser:Martin123q@martin-cluster.h06t6tm.mongodb.net/")
+// // }
+// async function mongoConnection(){
+//     await mongoose.connect("mongodb+srv://MartinUser:Martin123q@martin-cluster.h06t6tm.mongodb.net/ElBarDelFondo?retryWrites=true&w=majority&appName=Martin-Cluster")
+
 // }
 
 export default mongoConnection
