@@ -1,12 +1,16 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
+import { UserService } from "../services/users.service.js";
 import { userModel } from "../models/usersModel.js";
 import { Strategy as GitHubStrategy } from "passport-github2";
 import { Strategy as JWTStrategy, ExtractJwt } from "passport-jwt";
 import { createHash, isValidPassword } from "../../utils.js";
 import { env } from "./enviroment.js";
 
+const userService = new UserService();
+
 export function initializePassport() {
+
     //ESTRATEGIA DE REGISTRO LOCAL
     passport.use("register", new LocalStrategy({
         passReqToCallback: true,
@@ -16,12 +20,11 @@ export function initializePassport() {
     },
         async (req, username, password, done) => {
             try {
-                password = createHash(password);
-                const newUser = await userModel.create({ ...req.body, password });
+                const newUser = await userService.createUser(req.body);
                 done(null, newUser);
             } catch (error) {
                 // Codigo para controlar duplicadoss
-                if (error.code === 11000) {
+                if (error.code === 11000 || error.message.includes("duplicate")) {
                     return done(null, false, { message: "El email ya está registrado" });
                 }
                 done(error, null)
@@ -36,7 +39,7 @@ export function initializePassport() {
     },
         async (username, password, done) => {
             try {
-                const user = await userModel.findOne({ email: username });
+                const user = await userService.getUserByEmail(username);
                 if (!user) {
                     return done(null, false);
                 }
@@ -50,15 +53,15 @@ export function initializePassport() {
             }
         }));
 
-
     passport.serializeUser((user, done) => {
         done(null, user._id);
     });
 
     passport.deserializeUser(async (id, done) => {
-        const user = await userModel.findById(id);
+        const user = await userService.getUserById(id);
         done(null, user);
     });
+
     //Estrategia para terceros GitHub
     passport.use("github", new GitHubStrategy({
         clientID: env.GITHUB_CLIENT_ID,
@@ -68,8 +71,7 @@ export function initializePassport() {
         try {
             const email = profile.emails?.[0]?.value || `${profile.username}@github.com`;
 
-            // Check si el usuario existe
-            let user = await userModel.findOne({ email });
+            let user = await userService.getUserByEmail(email);
 
             if (!user) {
                 const nameParts = (profile.displayName || profile.username).split(' ');
@@ -80,6 +82,7 @@ export function initializePassport() {
                     first_name,
                     last_name,
                     email,
+                    age: 18,
                     password: createHash(accessToken)
                 });
             }
@@ -88,7 +91,7 @@ export function initializePassport() {
             if (error.code === 11000) {
                 // busca si el usuario existe 
                 const email = profile.emails?.[0]?.value || `${profile.username}@github.com`;
-                const user = await userModel.findOne({ email });
+                const user = await userService.getUserByEmail(email);
                 if (user) {
                     return done(null, user.toJSON());
                 }
@@ -106,7 +109,7 @@ export function initializePassport() {
         async (payload, done) => {
             try {
                 // Buscar el usuario en la base de datos usando el ID del payload
-                const user = await userModel.findById(payload.id || payload._id);
+                const user = await userService.getUserById(payload.id || payload._id);
 
                 if (!user) {
                     return done(null, false, { message: "Usuario no encontrado" });
@@ -118,8 +121,6 @@ export function initializePassport() {
                 return done(error, null);
             }
         }));
-
-
 
 }
 

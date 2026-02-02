@@ -1,63 +1,24 @@
-import {  Router } from "express"
+import { Router } from "express"
 import handleSession, { avoidLoginView } from "../middlewares/sessions.middlewares.js";
-import Product from "../models/productModel.js";
+import { renderLogin, renderProfile, renderRegister, renderHome, renderProductDetail } from "../controllers/views.controller.js";
 
 const router = Router();
 
 //Login 
-router.get("/login", avoidLoginView, async (req, res) => {
-    res.render("login")
-})
+router.get("/login", avoidLoginView, renderLogin)
 
-router.get("/profile", handleSession, async (req, res) => {
-    const {first_name, last_name, email} = req.session.user;
-    res.render("profile", {
-        first_name, last_name, email
-    })
-})
+router.get("/profile", handleSession, renderProfile)
 
-router.get('/register', avoidLoginView, (req, res) => {
-    res.render('register');
-});
+router.get('/register', avoidLoginView, renderRegister);
 
 // Home - requires authentication
-router.get("/", handleSession, async(req,res) => {
-    try {
-        const { limit = 10, page = 1 } = req.query;
-        const data = await Product.paginate({}, { limit, page, lean: true });
-        const products = data.docs;
-        delete data.docs;
-
-        const links = [ ]
-
-        for(let index = 1; index <= data.totalPages; index ++){
-            links.push({ text: index, link: `?limit=${limit}&page=${index}`})
-        }
-        
-        res.render("home", { products, links })
-    } catch (error) {
-        res.status(500).json({ message: error.message })
-    }
-})
+router.get("/", handleSession, renderHome)
 
 // Product Detail - requires authentication
-router.get("/product/:pid", handleSession, async(req,res) => {
-    try {
-        const { pid } = req.params;
-        const product = await Product.findById(pid).lean();
-        
-        if (!product) {
-            return res.status(404).render("error", { message: "Producto no encontrado" });
-        }
-        
-        res.render("productDetail", { product });
-    } catch (error) {
-        res.status(500).render("error", { message: "Error al cargar el producto" });
-    }
-})
+router.get("/product/:pid", handleSession, renderProductDetail)
 
 //Ruta de error generico - debe ir al final para no interceptar otras rutas
-router.use((req, res)=>{
+router.use((req, res) => {
     res.status(404).send("404 - La ruta no se encuentra")
 })
 

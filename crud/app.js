@@ -7,23 +7,16 @@ import cartRouter from "./src/routes/cartRouter.js";
 import sessionsRouter from "./src/routes/sessionsRouter.js"
 import viewsRouter from "./src/routes/viewsRouter.js"
 import { serverRoot } from "./utils.js"
-//cookie-parser
 import cookieParser from "cookie-parser"
-//mongo
 import MongoStore from "connect-mongo"
-//PASSPORT
 import passport from "passport"
-//DOTENV
 import { env } from "./src/config/enviroment.js"
 import { initializePassport } from "./src/config/passport.config.js"
-//HTTP
 import http from "http";
-//EXPRESS-SESSIONS
 import session from "express-session"
 
 // config()
 const app = express()
-// const PORT = 8080
 const PORT = env.PORT
 const server = http.createServer(app);
 
@@ -45,7 +38,7 @@ app.use(urlencoded({ extended: true }))
 //USAR COOKIE PARSER
 app.use(cookieParser("secretodecookie"));
 
-// ESCONDER LOS DATOS DE LAS COOKIES - RECORDARME PONERLO ANTES DE PASSPORT
+// ESCONDER LOS DATOS DE LAS COOKIES
 app.use(session({
     store: new MongoStore({
         autoRemove: "interval",
