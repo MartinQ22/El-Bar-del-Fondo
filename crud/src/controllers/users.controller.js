@@ -1,4 +1,5 @@
 import { UserService } from "../services/users.service.js";
+import { UsersDTO } from "../DTO/UsersDTO.js";
 
 const userService = new UserService();
 
@@ -16,7 +17,9 @@ export const getUserByEmail = async (req, res) => {
     try {
         let user = await userService.getUserByEmail(req.params.email);
         if (!user) return res.status(404).json({ message: "Usuario no encontrado" });
-        res.json(user);
+
+        const userDTO = new UsersDTO().setSessionUser(user);
+        res.json(userDTO);
     } catch (error) {
         console.log(error.message);
         res.status(500).json({ error: error.message });

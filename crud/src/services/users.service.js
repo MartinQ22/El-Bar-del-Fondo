@@ -1,5 +1,6 @@
 import { UsersDAO } from "../DAO/UsersDAO.js";
 import { createHash } from "../../utils.js";
+import { UsersDTO } from "../DTO/UsersDTO.js";
 
 const usersDao = new UsersDAO();
 
