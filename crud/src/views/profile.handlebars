@@ -3,13 +3,36 @@
         <header class="dashboard-header">
             <h1 class="header-title" style="font-size: 1.8em;">Perfil de Usuario</h1>
         </header>
-        
+
         <div style="margin-bottom: 20px;">
             <p style="font-size: 1.1em; margin: 10px 0;"><strong>Nombre:</strong> {{first_name}}</p>
             <p style="font-size: 1.1em; margin: 10px 0;"><strong>Apellido:</strong> {{last_name}}</p>
             <p style="font-size: 1.1em; margin: 10px 0;"><strong>Email:</strong> {{email}}</p>
+
+            <button id="resetPasswordBtn"
+                style="background-color: #ff9800; color: white; border: none; padding: 10px 15px; cursor: pointer; border-radius: 5px; margin-top: 10px;">
+                Restablecer Contraseña
+            </button>
         </div>
-        
+
+        <script>
+            document.getElementById('resetPasswordBtn').addEventListener('click', async () => {
+                try {
+                    const response = await fetch('/mail/reset-password-request', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({}) // Email is taken from session on server side
+                    });
+
+                    const result = await response.json();
+                    alert(result.message);
+                } catch (error) {
+                    console.error(error);
+                    alert("Error al enviar solicitud");
+                }
+            });
+        </script>
+
         <a href="/" class="back-button" style="display: inline-block; text-align: center; width: 99%;">
             Volver a la Página Principal
         </a>

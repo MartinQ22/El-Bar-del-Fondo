@@ -1,5 +1,7 @@
 import express from "express";
 import { createCart, deleteProductFromCart, clearCart, addProductToCart, getCart } from "../controllers/carts.controller.js";
+import { isUser } from "../middlewares/auth.middleware.js";
+import { passportCall } from "../config/passport.config.js";
 
 const cartRouter = express.Router();
 
@@ -13,7 +15,7 @@ cartRouter.delete("/:cid/products/:pid", deleteProductFromCart);
 cartRouter.delete("/:cid", clearCart);
 
 //Agregar productos al carrito
-cartRouter.post("/:cid/product/:pid", addProductToCart);
+cartRouter.post("/:cid/product/:pid", passportCall(), isUser, addProductToCart);
 
 //Traer productos del carrito 
 cartRouter.get("/:cid", getCart);

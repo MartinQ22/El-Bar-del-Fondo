@@ -48,3 +48,7 @@ export const renderProductDetail = async (req, res) => {
         res.status(500).render("error", { message: "Error al cargar el producto" });
     }
 };
+export const renderResetPassword = (req, res) => {
+    const { token } = req.query;
+    res.render('resetPassword', { token });
+};

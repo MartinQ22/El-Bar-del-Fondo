@@ -1,6 +1,6 @@
 import { Router } from "express"
 import handleSession, { avoidLoginView } from "../middlewares/sessions.middlewares.js";
-import { renderLogin, renderProfile, renderRegister, renderHome, renderProductDetail } from "../controllers/views.controller.js";
+import { renderLogin, renderProfile, renderRegister, renderHome, renderProductDetail, renderResetPassword } from "../controllers/views.controller.js";
 
 const router = Router();
 
@@ -11,13 +11,15 @@ router.get("/profile", handleSession, renderProfile)
 
 router.get('/register', avoidLoginView, renderRegister);
 
-// Home - requires authentication
+router.get('/reset-password', avoidLoginView, renderResetPassword);
+
+// Home
 router.get("/", handleSession, renderHome)
 
-// Product Detail - requires authentication
+// Product Detail 
 router.get("/product/:pid", handleSession, renderProductDetail)
 
-//Ruta de error generico - debe ir al final para no interceptar otras rutas
+//Ruta de error generico
 router.use((req, res) => {
     res.status(404).send("404 - La ruta no se encuentra")
 })

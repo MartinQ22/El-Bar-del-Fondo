@@ -1,7 +1,7 @@
 import { Router, urlencoded } from "express"
 import passport from "passport"
 import { passportCall } from "../config/passport.config.js";
-import { register, login, githubCallback, getCurrentUser } from "../controllers/sessions.controller.js";
+import { register, login, githubCallback, getCurrentUser, resetPassword } from "../controllers/sessions.controller.js";
 
 const router = Router();
 
@@ -10,6 +10,8 @@ router.use(urlencoded({ extended: true }))
 router.post("/register", register)
 
 router.post("/login", login)
+
+router.post("/reset-password", resetPassword);
 
 //Rutas de autenticacion GitHubb
 router.get("/github", passport.authenticate("github", { scope: ["user:email"] }))
