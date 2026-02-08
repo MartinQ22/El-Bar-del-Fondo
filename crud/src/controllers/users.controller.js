@@ -26,10 +26,6 @@ export const getUserByEmail = async (req, res) => {
     }
 };
 
-export const registerUser = async (req, res) => {
-    res.status(200).json({ message: "Registro exitoso" });
-};
-
 export const createUser = async (req, res) => {
     try {
         let result = await userService.createUser(req.body);

@@ -11,7 +11,7 @@ router.get("/profile", handleSession, renderProfile)
 
 router.get('/register', avoidLoginView, renderRegister);
 
-router.get('/reset-password', avoidLoginView, renderResetPassword);
+router.get('/reset-password', renderResetPassword);
 
 // Home
 router.get("/", handleSession, renderHome)

@@ -6,7 +6,7 @@ import { env } from "./src/config/enviroment.js";
 
 // ENCRIPTACION BRCYPT
 export function createHash(password) {
-    return bcrypt.hashSync(password, bcrypt.genSaltSync(10)) //GenSalt define la cantidad de veces que se multipplica la cadena de hasheo
+    return bcrypt.hashSync(password, bcrypt.genSaltSync(10)) //GenSalt define la cantidad de veces que se multiplica la cadena de hasheo
 }
 
 export function isValidPassword(password, hashedPassword) {

@@ -1,5 +1,5 @@
 import { userModel } from "../models/usersModel.js";
-import { isValidPassword, createHash, generateToken } from "../../utils.js";
+import { isValidPassword, createHash, generateToken, serverRoot } from "../../utils.js";
 import { env } from "../config/enviroment.js";
 import jwt from "jsonwebtoken";
 
@@ -55,7 +55,7 @@ export const login = async (req, res) => {
     try {
         if (email === env.ADMIN_USER && password === env.ADMIN_PASS) {
             const adminUser = {
-                _id: "admin_id", 
+                _id: "admin_id",
                 first_name: "Admin",
                 last_name: "System",
                 email: email,
@@ -138,6 +138,26 @@ export const resetPassword = async (req, res) => {
         user.password = createHash(password);
         await user.save();
 
+        // LOG USER IN AFTER RESET
+        const tokenJWT = generateToken({ id: user._id, email: user.email, role: user.role });
+
+        res.cookie("jwt", tokenJWT, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'strict',
+            maxAge: 24 * 60 * 60 * 1000 // 24 horas
+        });
+
+        req.session.user = {
+            _id: user._id,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            email: user.email,
+            age: user.age,
+            role: user.role,
+            provider: user.provider
+        };
+
         res.status(200).json({ message: "Contraseña restablecida exitosamente" });
 
     } catch (error) {
@@ -150,7 +170,6 @@ export const resetPassword = async (req, res) => {
 
 export const getCurrentUser = async (req, res) => {
     try {
-        // Retornar datos del usuario (sin password)
         const userData = {
             id: req.user._id,
             first_name: req.user.first_name,
@@ -163,4 +182,14 @@ export const getCurrentUser = async (req, res) => {
     } catch (error) {
         res.status(500).json({ status: "error", message: error.message });
     }
+};
+export const logout = (req, res) => {
+    res.clearCookie("jwt");
+    req.session.destroy((err) => {
+        if (err) {
+            console.error("Error al destruir la sesión:", err);
+            return res.status(500).json({ status: "error", message: "Error al cerrar sesión" });
+        }
+        res.redirect("/login");
+    });
 };

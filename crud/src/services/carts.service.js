@@ -12,8 +12,6 @@ export class CartService {
     }
 
     async addProductToCart(cid, pid, quantity) {
-        // This logic was in controller: $push: { products: { product: pid, quantity } }
-        // We can do it via DAO updateCart
         const update = { $push: { products: { product: pid, quantity } } };
         return await cartsDao.updateCart(cid, update);
     }

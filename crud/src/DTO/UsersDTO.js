@@ -9,14 +9,5 @@ export class UsersDTO {
         };
         return userData;
     }
-//normalize sin usar
-    // normalizeFields(user){
-    //     return {
-    //         first_name :user.nombre, 
-    //         last_name:user.apellido, 
-    //         email:user.email, 
-    //         role:user.rol, 
-    //         password:user.contraseña
-    //     }
-    // }
+
 }

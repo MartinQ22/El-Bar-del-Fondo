@@ -12,7 +12,7 @@ export class UserService {
     async createUser(userData) {
         const { email, password } = userData;
 
-        // Regex validations moved here
+        // Regex
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
         const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 
@@ -49,15 +49,15 @@ export class UserService {
         return await usersDao.getUserByEmail(email);
     }
 
-    // async getUserById(id) {
-    //     return await usersDao.getUserById(id);
-    // }
+     async getUserById(id) {
+         return await usersDao.getUserById(id);
+     }
 
     async deleteUser(email) {
         return await usersDao.deleteUserByEmail(email);
     }
 
-    //   async deleteUserById(id) {
-    //     return await usersDao.deleteUserById(id);
-    // }
+      async deleteUserById(id) {
+        return await usersDao.deleteUserById(id);
+     }
 }

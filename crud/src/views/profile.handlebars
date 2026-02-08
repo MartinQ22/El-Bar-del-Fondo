@@ -9,32 +9,53 @@
             <p style="font-size: 1.1em; margin: 10px 0;"><strong>Apellido:</strong> {{last_name}}</p>
             <p style="font-size: 1.1em; margin: 10px 0;"><strong>Email:</strong> {{email}}</p>
 
+            {{#if isGithub}}
+            <button disabled
+                style="background-color: #ccc; color: white; border: none; padding: 10px 15px; cursor: not-allowed; border-radius: 5px; margin-top: 10px;"
+                title="No puedes cambiar tu contraseña porque iniciaste sesión con GitHub">
+                Restablecer Contraseña (GitHub)
+            </button>
+            {{else}}
             <button id="resetPasswordBtn"
                 style="background-color: #ff9800; color: white; border: none; padding: 10px 15px; cursor: pointer; border-radius: 5px; margin-top: 10px;">
                 Restablecer Contraseña
             </button>
+            {{/if}}
         </div>
 
         <script>
-            document.getElementById('resetPasswordBtn').addEventListener('click', async () => {
-                try {
-                    const response = await fetch('/mail/reset-password-request', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({}) // Email is taken from session on server side
-                    });
+            const resetPasswordBtn = document.getElementById('resetPasswordBtn');
+            if (resetPasswordBtn) {
+                resetPasswordBtn.addEventListener('click', async () => {
+                    try {
+                        const response = await fetch('/mail/reset-password-request', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({})
+                        });
 
-                    const result = await response.json();
-                    alert(result.message);
-                } catch (error) {
-                    console.error(error);
-                    alert("Error al enviar solicitud");
-                }
-            });
+                        const result = await response.json();
+
+                        if (response.ok) {
+                            alert(result.message);
+                        } else {
+                            alert(result.message || result.error || "Error desconocido al solicitar reset");
+                        }
+                    } catch (error) {
+                        console.error(error);
+                        alert("Error de conexión al enviar solicitud");
+                    }
+                });
+            }
         </script>
 
         <a href="/" class="back-button" style="display: inline-block; text-align: center; width: 99%;">
             Volver a la Página Principal
+        </a>
+
+        <a href="/api/sessions/logout" class="status-admin"
+            style="display: block; text-align: center; width: 94%; margin-top: 20px; text-decoration: none; padding: 12px; background-color: #f44336; border-radius: 5px;">
+            Cerrar sesión
         </a>
     </div>
 </div>

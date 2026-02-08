@@ -1,32 +1,53 @@
 {{!-- Pagina Principal Home --}}
 <div class="dashboard-container">
-    <header class="dashboard-header">
+    <header class="dashboard-header" style="position: relative;">
         <h1 class="header-title">
             BIENVENIDO A BACKSTREET!
         </h1>
+        <a href="/profile" class="profile-button" style="
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 50px;
+            background-color: #ff9800;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            font-weight: bold;
+            font-size: 10px;
+            text-align: center;
+        ">
+            Tu Perfil
+        </a>
     </header>
-    
+
     <section class="products-grid">
         {{#each products}}
-            <a href="/product/{{this._id}}" class="product-card-link">
-                <div class="product-card">
-                    <img class="card-thumbnail" src="{{this.thumbnail}}" alt="{{this.title}}">
-                    <div class="card-body">
-                        <h2 class="card-title">
-                            {{this.title}}
-                        </h2>
-                        <h3 class="card-price">
-                            Precio: ${{this.price}}
-                        </h3>
-                    </div>
+        <a href="/product/{{this._id}}" class="product-card-link">
+            <div class="product-card">
+                <img class="card-thumbnail" src="{{this.thumbnail}}" alt="{{this.title}}">
+                <div class="card-body">
+                    <h2 class="card-title">
+                        {{this.title}}
+                    </h2>
+                    <h3 class="card-price">
+                        Precio: ${{this.price}}
+                    </h3>
                 </div>
-            </a>
+            </div>
+        </a>
         {{/each}}
     </section>
 
     <nav class="pagination-container">
         {{#each links}}
-            <a href="{{this.link}}" class="pagination-link">{{this.text}}</a>
+        <a href="{{this.link}}" class="pagination-link">{{this.text}}</a>
         {{/each}}
     </nav>
 </div>

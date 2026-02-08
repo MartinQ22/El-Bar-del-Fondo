@@ -5,9 +5,11 @@ export const renderLogin = async (req, res) => {
 };
 
 export const renderProfile = async (req, res) => {
-    const { first_name, last_name, email } = req.session.user;
+    const { first_name, last_name, email, provider } = req.session.user;
+    const isGithub = provider === 'github' || email.endsWith('@github.com');
+
     res.render("profile", {
-        first_name, last_name, email
+        first_name, last_name, email, provider, isGithub
     });
 };
 

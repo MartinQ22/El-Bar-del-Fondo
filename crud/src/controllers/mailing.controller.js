@@ -3,9 +3,19 @@ import { welcomeMessage, sendPasswordResetEmail } from "../services/mailing.serv
 import { generateToken } from "../../utils.js";
 
 export async function sendWelcomeMessage(req, res) {
-    //agregar funcion para sacar el mail desde la sesion para agregarlo al welcomeMessage ahora esta harcodeado
-    await welcomeMessage("quirogamartin@live.com", "aqui deberia ir nombre de user");
-    res.send("email de bienvenida enviado con exito!")
+    try {
+        if (!req.session.user) {
+            return res.status(401).json({ message: "No hay una sesión de usuario activa" });
+        }
+
+        const { first_name, email } = req.session.user;
+
+        await welcomeMessage(email, first_name);
+        res.status(200).json({ message: "Email de bienvenida enviado con éxito" });
+    } catch (error) {
+        console.error("Error al enviar mensaje de bienvenida:", error);
+        res.status(500).json({ message: "Error al enviar el email de bienvenida", error: error.toString() });
+    }
 }
 
 export async function sendPasswordReset(req, res) {
@@ -14,7 +24,10 @@ export async function sendPasswordReset(req, res) {
 
         const userEmail = req.session.user ? req.session.user.email : email;
 
-        if (!userEmail) return res.status(400).json({ message: "No se encontró email" });
+        if (!userEmail) {
+            console.error("SendPasswordReset: No email provided or found in session.");
+            return res.status(400).json({ message: "No se encontró email para enviar el correo." });
+        }
 
         // Token con duracion de 1 hora
         const token = generateToken({ email: userEmail }, "1h");
@@ -23,6 +36,12 @@ export async function sendPasswordReset(req, res) {
         res.status(200).json({ message: "Correo de restablecimiento enviado" });
 
     } catch (error) {
-        res.status(500).json({ message: "Error al enviar correo", error: error.message });
+        console.error("DEBUG - SendPasswordReset Error Details:", {
+            message: error.message,
+            stack: error.stack,
+            env_user_g: !!env.USER_G,
+            env_mail_app: !!env.MAIL_APP
+        });
+        res.status(500).json({ message: "Error al enviar correo", error: error.toString() });
     }
 }

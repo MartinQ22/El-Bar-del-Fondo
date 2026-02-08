@@ -4,7 +4,6 @@ const productsDao = new ProductsDAO();
 
 export class ProductService {
     async getProducts(query, options) {
-        // Here we could add default options or specific query logic
         return await productsDao.getAllProducts(query, options);
     }
 

@@ -66,7 +66,7 @@ export function initializePassport() {
     passport.use("github", new GitHubStrategy({
         clientID: env.GITHUB_CLIENT_ID,
         clientSecret: env.GITHUB_CLIENT_SECRET,
-        callbackURL: "http://localhost:8080/api/sessions/githubcallback"
+        callbackURL: `${env.BASE_URL}/api/sessions/githubcallback`
     }, async (accessToken, refreshToken, profile, done) => {
         try {
             const email = profile.emails?.[0]?.value || `${profile.username}@github.com`;
@@ -83,7 +83,8 @@ export function initializePassport() {
                     last_name,
                     email,
                     age: 18,
-                    password: createHash(accessToken)
+                    password: createHash(accessToken),
+                    provider: 'github'
                 });
             }
             return done(null, user.toJSON());
@@ -101,21 +102,17 @@ export function initializePassport() {
     }))
 
     //Estrategia "jwt" para extraer token de cookie y obtener usuario asociado
-    //Reemplaza a la anterior estrategia "current" y "jwt" simple
     passport.use("jwt", new JWTStrategy({
         jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]),
         secretOrKey: env.JWT_SECRET
     },
         async (payload, done) => {
             try {
-                // Buscar el usuario en la base de datos usando el ID del payload
                 const user = await userService.getUserById(payload.id || payload._id);
 
                 if (!user) {
                     return done(null, false, { message: "Usuario no encontrado" });
                 }
-
-                // Retornar el usuario completo
                 return done(null, user);
             } catch (error) {
                 return done(error, null);
@@ -131,7 +128,6 @@ export function cookieExtractor(req) {
     return null;
 }
 
-//CALLBACK PERSONALIZADO
 export function passportCall() {
     return async (req, res, next) => {
         passport.authenticate("jwt", (err, user, info) => {

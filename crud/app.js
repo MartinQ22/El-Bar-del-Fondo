@@ -1,4 +1,4 @@
-import express, { json, urlencoded, } from "express"
+import express, { json, urlencoded } from "express"
 import { engine } from "express-handlebars"
 import mongoConnect from "./database/mongoConnection.js"
 import usersRouter from "./src/routes/usersRouter.js"
@@ -31,7 +31,6 @@ app.set("views", serverRoot + "/src/views")
 
 app.use(express.static(serverRoot + "/public"))
 app.use(json())
-app.use(express.json())
 app.use(urlencoded({ extended: true }))
 
 //USAR COOKIE PARSER
@@ -59,10 +58,10 @@ app.use(passport.session())
 //Endpoints Handlers
 app.use("/api/users", usersRouter);
 app.use("/api/sessions", sessionsRouter)
-app.use("/", viewsRouter)
 app.use("/api/carts", cartRouter);
 app.use("/api/products", productsRouter);
 app.use("/mail", mailingRouter)
+app.use("/", viewsRouter)
 
 server.listen(PORT, () => {
     mongoConnect().then(() => console.log("Base de datos conectada"));

@@ -5,13 +5,13 @@ export async function welcomeMessage(destiny, name) {
     await transporter.sendMail({
         from: env.MAIL_APP,
         to: destiny,
-        subject: `Bienvenido ${name}a nuestro gran espacio!`,
+        subject: `Bienvenido ${name} a nuestro gran espacio!`,
         text: "Gracias por pasarte por nuestro sitio web"
     })
 }
 
 export async function sendPasswordResetEmail(destiny, token) {
-    const link = `http://localhost:8080/reset-password?token=${token}`;
+    const link = `${env.BASE_URL}/reset-password?token=${token}`;
 
     await transporter.sendMail({
         from: env.MAIL_APP,

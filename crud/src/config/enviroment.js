@@ -12,5 +12,6 @@ export const env = {
     COOKIE_SECRET: process.env.COOKIE_SECRET,
     USER_G: process.env.USER_G,
     ADMIN_USER: process.env.ADMIN_USER,
-    ADMIN_PASS: process.env.ADMIN_PASS
+    ADMIN_PASS: process.env.ADMIN_PASS,
+    BASE_URL: process.env.BASE_URL || "http://localhost:8080"
 }
