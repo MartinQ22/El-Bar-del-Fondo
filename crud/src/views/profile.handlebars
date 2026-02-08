@@ -15,6 +15,12 @@
                 title="No puedes cambiar tu contraseña porque iniciaste sesión con GitHub">
                 Restablecer Contraseña (GitHub)
             </button>
+            {{else if isAdmin}}
+            <button disabled
+                style="background-color: #ccc; color: white; border: none; padding: 10px 15px; cursor: not-allowed; border-radius: 5px; margin-top: 10px;"
+                title="El usuario administrador está configurado en las variables de entorno y no puede ser modificado aquí">
+                Restablecer Contraseña (Admin)
+            </button>
             {{else}}
             <button id="resetPasswordBtn"
                 style="background-color: #ff9800; color: white; border: none; padding: 10px 15px; cursor: pointer; border-radius: 5px; margin-top: 10px;">
