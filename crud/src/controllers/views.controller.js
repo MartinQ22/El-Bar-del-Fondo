@@ -1,4 +1,5 @@
 import Product from "../models/productModel.js";
+import { createError } from "../utils/createError.utils.js";
 
 export const renderLogin = async (req, res) => {
     res.render("login");
@@ -18,7 +19,7 @@ export const renderRegister = (req, res) => {
     res.render('register');
 };
 
-export const renderHome = async (req, res) => {
+export const renderHome = async (req, res, next) => {
     try {
         const { limit = 10, page = 1 } = req.query;
         const data = await Product.paginate({}, { limit, page, lean: true });
@@ -33,7 +34,7 @@ export const renderHome = async (req, res) => {
 
         res.render("home", { products, links })
     } catch (error) {
-        res.status(500).json({ message: error.message })
+        return next(createError(error.message, 500));
     }
 };
 
@@ -55,3 +56,4 @@ export const renderResetPassword = (req, res) => {
     const { token } = req.query;
     res.render('resetPassword', { token });
 };
+

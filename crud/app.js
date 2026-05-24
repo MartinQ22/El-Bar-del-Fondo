@@ -1,6 +1,5 @@
 import express, { json, urlencoded } from "express"
 import { engine } from "express-handlebars"
-import mongoConnect from "./database/mongoConnection.js"
 import usersRouter from "./src/routes/usersRouter.js"
 import productsRouter from "./src/routes/productsRouter.js"
 import cartRouter from "./src/routes/cartRouter.js";
@@ -13,13 +12,19 @@ import MongoStore from "connect-mongo"
 import passport from "passport"
 import { env } from "./src/config/enviroment.js"
 import { initializePassport } from "./src/config/passport.config.js"
-import http from "http";
 import session from "express-session"
+import { errorHandler } from "./src/middlewares/errorHandler.middleware.js";
+import {requestLogger} from "./src/middlewares/requestLogger.middleware.js";
+import healthRouter from "./src/routes/healthRouter.js";
+import { cacheControl } from "./src/middlewares/cacheControl.middleware.js";
+import compression from "compression";
 
 // config()
 const app = express()
-const PORT = env.PORT
-const server = http.createServer(app);
+
+app.use(compression())
+app.use(requestLogger);
+app.use(cacheControl)
 
 //HandleBars Config
 app.engine("handlebars", engine({
@@ -61,8 +66,10 @@ app.use("/api/sessions", sessionsRouter)
 app.use("/api/carts", cartRouter);
 app.use("/api/products", productsRouter);
 app.use("/mail", mailingRouter)
+app.use("/api/health", healthRouter)
 app.use("/", viewsRouter)
 
-server.listen(PORT, () => {
-    mongoConnect().then(() => console.log("Base de datos conectada"));
-})
+//Error Handler
+app.use(errorHandler)
+
+export default app;

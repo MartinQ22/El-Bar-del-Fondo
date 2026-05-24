@@ -1,8 +1,10 @@
 import { ProductService } from "../services/products.service.js";
+import { createError } from "../utils/createError.utils.js";
+import { successResponse } from "../utils/apiResonse.utils.js";
 
 const productService = new ProductService();
 
-export const getProducts = async (req, res) => {
+export const getProducts = async (req, res, next) => {
     try {
         const { limit = 10, page = 1 } = req.query;
 
@@ -10,43 +12,48 @@ export const getProducts = async (req, res) => {
         const products = data.docs;
         delete data.docs;
 
-        res.status(200).json({ status: "success", payload: products, ...data });
+        return successResponse(res, { message: "Lista de productos", payload: { products, ...data } });
     } catch (error) {
-        res.status(500).json({ status: "error", message: "Error al recuperar el producto" });
+        return next(createError("Error al obtener los productos", 500));
     }
 };
 
-export const createProduct = async (req, res) => {
+export const createProduct = async (req, res, next) => {
     try {
         const product = await productService.createProduct(req.body);
-        res.status(201).json({ status: "success", payload: product });
+        return successResponse(res, { statusCode: 201, message: "Producto creado", payload: product });
     } catch (error) {
-        res.status(500).json({ status: "error", message: "Error al crear el producto" });
+        return next(createError("Error al crear el producto", 500));
     }
 };
 
-export const updateProduct = async (req, res) => {
+export const updateProduct = async (req, res, next) => {
     try {
         const pid = req.params.pid;
         const updates = req.body;
 
         const updatedProduct = await productService.updateProduct(pid, updates);
-        if (!updatedProduct) return res.status(404).json({ status: "error", message: "Error al encontrar el producto" });
+        if (!updatedProduct) {
+            return next(createError("Error al encontrar el producto", 404));
+        }
 
-        res.status(200).json({ status: "success", payload: updatedProduct });
+        return successResponse(res, { message: "Producto modificado", payload: updatedProduct });
     } catch (error) {
-        res.status(500).json({ status: "error", message: "Error al modificar el producto" });
+        return next(createError("Error al modificar el producto", 500));
     }
 };
 
-export const deleteProduct = async (req, res) => {
+export const deleteProduct = async (req, res, next) => {
     try {
         const pid = req.params.pid;
         const deletedProduct = await productService.deleteProduct(pid);
-        if (!deletedProduct) return res.status(404).json({ status: "error", message: "Error al encontrar el producto" });
+        if (!deletedProduct) {
+            return next(createError("Error al encontrar el producto", 404));
+        }
 
-        res.status(200).json({ status: "success", message: "↓↓↓ Producto eliminado ↓↓↓", payload: deletedProduct });
+        return successResponse(res, { message: "↓↓↓ Producto eliminado ↓↓↓", payload: deletedProduct });
     } catch (error) {
-        res.status(500).json({ status: "error", message: "Error al borrar el producto" });
+        return next(createError("Error al borrar el producto", 500));
     }
 };
+

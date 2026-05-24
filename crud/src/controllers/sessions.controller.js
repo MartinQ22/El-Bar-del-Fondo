@@ -2,19 +2,21 @@ import { userModel } from "../models/usersModel.js";
 import { isValidPassword, createHash, generateToken, serverRoot } from "../../utils.js";
 import { env } from "../config/enviroment.js";
 import jwt from "jsonwebtoken";
+import { createError } from "../utils/createError.utils.js";
+import { successResponse } from "../utils/apiResonse.utils.js";
 
-export const register = async (req, res) => {
+export const register = async (req, res, next) => {
     const { first_name, last_name, email, age, password } = req.body
 
     try {
         if (req.session.user) {
-            return res.status(200).json({ success: true, redirect: "/profile" });
+            return successResponse(res, { message: "Sesión ya activa", payload: { redirect: "/profile" } });
         }
 
         // Check if user already exists
         const existingUser = await userModel.findOne({ email });
         if (existingUser) {
-            return res.status(400).json({ message: "El email ya está registrado" });
+            return next(createError("El email ya está registrado", 400));
         }
 
         const hashedPassword = createHash(password)
@@ -40,17 +42,17 @@ export const register = async (req, res) => {
 
         req.session.user = newUser;
 
-        res.status(200).json({ success: true, redirect: "/" });
+        return successResponse(res, { message: "Usuario registrado con éxito", payload: { redirect: "/" } });
     } catch (error) {
-        console.log(error.message);
+        console.error(error.message);
         if (error.code === 11000) {
-            return res.status(400).json({ message: "El email ya está registrado" });
+            return next(createError("El email ya está registrado", 400));
         }
-        res.status(500).json({ message: "Error al registrar usuario", error: error.message })
+        return next(createError("Error al registrar usuario", 500));
     }
 };
 
-export const login = async (req, res) => {
+export const login = async (req, res, next) => {
     const { email, password } = req.body;
     try {
         if (email === env.ADMIN_USER && password === env.ADMIN_PASS) {
@@ -78,7 +80,7 @@ export const login = async (req, res) => {
 
         const user = await userModel.findOne({ email })
         if (!user) {
-            return res.status(401).json({ message: "Usuario no encontrado" })
+            return next(createError("Usuario no encontrado", 401));
         }
         if (isValidPassword(password, user.password)) {
             // Generar JWT token
@@ -93,13 +95,13 @@ export const login = async (req, res) => {
             });
 
             req.session.user = user
-            res.status(200).redirect("/profile")
+            return res.status(200).redirect("/profile");
         } else {
-            res.status(403).json({ message: "No se puede loguear, intentelo nuevamente" })
+            return next(createError("No se puede loguear, intentelo nuevamente", 403));
         }
     } catch (error) {
-        console.log(error.message);
-        res.status(500).json({ message: "Error en el servidor" })
+        console.error(error.message);
+        return next(createError("Error en el servidor", 500));
     }
 };
 
@@ -121,7 +123,7 @@ export const githubCallback = async (req, res) => {
 
 
 //Password RESET
-export const resetPassword = async (req, res) => {
+export const resetPassword = async (req, res, next) => {
     const { token, password } = req.body;
 
     try {
@@ -129,10 +131,12 @@ export const resetPassword = async (req, res) => {
         const email = decoded.email;
 
         const user = await userModel.findOne({ email });
-        if (!user) return res.status(404).json({ message: "Usuario no encontrado" });
+        if (!user) {
+            return next(createError("Usuario no encontrado", 404));
+        }
 
         if (isValidPassword(password, user.password)) {
-            return res.status(400).json({ message: "La nueva contraseña no puede ser igual a la anterior" });
+            return next(createError("La nueva contraseña no puede ser igual a la anterior", 400));
         }
 
         user.password = createHash(password);
@@ -158,17 +162,17 @@ export const resetPassword = async (req, res) => {
             provider: user.provider
         };
 
-        res.status(200).json({ message: "Contraseña restablecida exitosamente" });
+        return successResponse(res, { message: "Contraseña restablecida exitosamente" });
 
     } catch (error) {
         if (error.name === 'TokenExpiredError') {
-            return res.status(400).json({ message: "El enlace ha expirado. Solicita uno nuevo." });
+            return next(createError("El enlace ha expirado. Solicita uno nuevo.", 400));
         }
-        res.status(500).json({ message: "Error al restablecer contraseña", error: error.message });
+        return next(createError("Error al restablecer contraseña", 500));
     }
 };
 
-export const getCurrentUser = async (req, res) => {
+export const getCurrentUser = async (req, res, next) => {
     try {
         const userData = {
             id: req.user._id,
@@ -178,18 +182,20 @@ export const getCurrentUser = async (req, res) => {
             age: req.user.age,
             role: req.user.role
         };
-        res.status(200).json({ status: "success", user: userData });
+        return successResponse(res, { message: "Usuario actual obtenido con éxito", payload: userData });
     } catch (error) {
-        res.status(500).json({ status: "error", message: error.message });
+        return next(createError(error.message, 500));
     }
 };
-export const logout = (req, res) => {
+
+export const logout = (req, res, next) => {
     res.clearCookie("jwt");
     req.session.destroy((err) => {
         if (err) {
             console.error("Error al destruir la sesión:", err);
-            return res.status(500).json({ status: "error", message: "Error al cerrar sesión" });
+            return next(createError("Error al cerrar sesión", 500));
         }
-        res.redirect("/login");
+        return res.redirect("/login");
     });
 };
+
