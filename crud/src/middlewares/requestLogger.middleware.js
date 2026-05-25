@@ -1,3 +1,6 @@
+import { logger } from "../utils/logger.utils.js";
+import { requestCounter, requestDuration } from "../utils/metrics.utils.js";
+
 function getLogLevel(statusCode){
     if (statusCode >= 500) return "error"
     if (statusCode >= 400 && statusCode < 500) return "error"
@@ -6,21 +9,27 @@ function getLogLevel(statusCode){
 }
 
 export function requestLogger(req, res, next) {
+    requestCounter.inc()
+
     const start = Date.now();
    
     res.on("finish", () => {
+        requestCounter.labels(req.method, res.statusCode)
+
         const responseTimeMs = Date.now() - start;
 
-        const log = {
-            level: getLogLevel(res.statusCode),
+        requestDuration.observe(responseTimeMs / 1000)
+
+        const logLevel = getLogLevel(res.statusCode)
+
+        logger[logLevel]({
+            msg: "HTTP Request",
+            reqId: req.reqId,
             method: req.method,
             path: req.originalUrl,
             statusCode: res.statusCode,
-            responseTimeMs,
-            Timestamp: new Date().toISOString()
-        }
-
-        console.log( JSON.stringify(log) )
+            responseTimeMs
+        })
     })
     next();
 }

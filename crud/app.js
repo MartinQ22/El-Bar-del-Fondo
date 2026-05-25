@@ -18,13 +18,17 @@ import {requestLogger} from "./src/middlewares/requestLogger.middleware.js";
 import healthRouter from "./src/routes/healthRouter.js";
 import { cacheControl } from "./src/middlewares/cacheControl.middleware.js";
 import compression from "compression";
+import { requestId } from "./src/middlewares/requestId.middleware.js";
+import metricsRouter from "./src/routes/metricsRouter.js"
 
 // config()
 const app = express()
 
 app.use(compression())
+app.use(requestId)
 app.use(requestLogger);
 app.use(cacheControl)
+app.use("/metrics", metricsRouter)
 
 //HandleBars Config
 app.engine("handlebars", engine({
