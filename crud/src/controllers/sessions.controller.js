@@ -3,7 +3,7 @@ import { isValidPassword, createHash, generateToken, serverRoot } from "../../ut
 import { env } from "../config/enviroment.js";
 import jwt from "jsonwebtoken";
 import { createError } from "../utils/createError.utils.js";
-import { successResponse } from "../utils/apiResonse.utils.js";
+import { successResponse } from "../utils/apiResponse.utils.js";
 
 export const register = async (req, res, next) => {
     const { first_name, last_name, email, age, password } = req.body

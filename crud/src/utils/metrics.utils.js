@@ -3,7 +3,7 @@ import client from "prom-client";
 export const requestCounter = new client.Counter({
     name: "http_request_total",
     help: "request total",
-    labelNames: ["method, status"]
+    labelNames: ["method", "status"]
 })
 
 export const requestDuration = new client.Histogram({

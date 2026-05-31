@@ -20,6 +20,7 @@ import { cacheControl } from "./src/middlewares/cacheControl.middleware.js";
 import compression from "compression";
 import { requestId } from "./src/middlewares/requestId.middleware.js";
 import metricsRouter from "./src/routes/metricsRouter.js"
+import debugRouter from "./src/routes/debugRouter.js"
 
 // config()
 const app = express()
@@ -29,6 +30,7 @@ app.use(requestId)
 app.use(requestLogger);
 app.use(cacheControl)
 app.use("/metrics", metricsRouter)
+app.use("/api/debug", debugRouter)
 
 //HandleBars Config
 app.engine("handlebars", engine({

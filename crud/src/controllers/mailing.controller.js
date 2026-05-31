@@ -2,7 +2,7 @@ import { welcomeMessage, sendPasswordResetEmail } from "../services/mailing.serv
 import { generateToken } from "../../utils.js";
 import { env } from "../config/enviroment.js";
 import { createError } from "../utils/createError.utils.js";
-import { successResponse } from "../utils/apiResonse.utils.js";
+import { successResponse } from "../utils/apiResponse.utils.js";
 
 export async function sendWelcomeMessage(req, res, next) {
     try {
@@ -46,4 +46,4 @@ export async function sendPasswordReset(req, res, next) {
         });
         return next(createError("Error al enviar correo", 500));
     }
-}
+}

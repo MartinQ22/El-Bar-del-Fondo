@@ -1,6 +1,6 @@
 import { ProductService } from "../services/products.service.js";
 import { createError } from "../utils/createError.utils.js";
-import { successResponse } from "../utils/apiResonse.utils.js";
+import { successResponse } from "../utils/apiResponse.utils.js";
 
 const productService = new ProductService();
 

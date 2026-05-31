@@ -1,7 +1,7 @@
 import { UserService } from "../services/users.service.js";
 import { UsersDTO } from "../DTO/UsersDTO.js";
 import { createError } from "../utils/createError.utils.js";
-import { successResponse } from "../utils/apiResonse.utils.js";
+import { successResponse } from "../utils/apiResponse.utils.js";
 
 const userService = new UserService();
 

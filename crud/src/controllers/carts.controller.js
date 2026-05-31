@@ -1,6 +1,6 @@
 import { CartService } from "../services/carts.service.js";
 import { createError } from "../utils/createError.utils.js";
-import { successResponse } from "../utils/apiResonse.utils.js";
+import { successResponse } from "../utils/apiResponse.utils.js";
 
 const cartService = new CartService();
 

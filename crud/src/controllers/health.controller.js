@@ -1,12 +1,13 @@
 import { createError } from "../utils/createError.utils.js";
+import { env } from "../config/enviroment.js";
 
 export const checkHealth = async (req, res, next) => {
     try {
-        const isMaintenance = process.env.MAINTENANCE === 'true';
+        const isMaintenance = env.MAINTENANCE;
         
         const healthStatus = {
             status: isMaintenance ? "maintenance" : "OK",
-            environment: process.env.NODE_ENV || "development",
+            environment: env.NODE_ENV,
             timestamp: new Date().toISOString(),
             uptime: process.uptime(),
             memoryUsage: process.memoryUsage()
