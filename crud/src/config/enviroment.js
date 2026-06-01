@@ -24,5 +24,6 @@ export const env = {
     workers: Number(cleanEnv(process.env.CLUSTER_WORKERS)) || 2,
     MAINTENANCE: cleanEnv(process.env.MAINTENANCE) === "true",
     NODE_ENV: cleanEnv(process.env.NODE_ENV) || "development",
-    TIENDA: cleanEnv(process.env.Tienda) || cleanEnv(process.env.TIENDA) || "Tienda El Bar del Fondo"
+    TIENDA: cleanEnv(process.env.Tienda) || cleanEnv(process.env.TIENDA) || "Tienda El Bar del Fondo",
+    isProd: process.env.NODE_ENV === "production"
 }

@@ -7,6 +7,10 @@ export class ProductService {
         return await productsDao.getAllProducts(query, options);
     }
 
+    async getProductById(id) {
+        return await productsDao.getProductById(id);
+    }
+
     async createProduct(productData) {
         return await productsDao.createProduct(productData);
     }

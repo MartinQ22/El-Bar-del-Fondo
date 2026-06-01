@@ -18,6 +18,19 @@ export const getProducts = async (req, res, next) => {
     }
 };
 
+export const getProductById = async (req, res, next) => {
+    try {
+        const pid = req.params.pid;
+        const product = await productService.getProductById(pid);
+        if (!product) {
+            return next(createError("Error al encontrar el producto", 404));
+        }
+        return successResponse(res, { message: "Producto encontrado", payload: product });
+    } catch (error) {
+        return next(createError("Error al obtener el producto", 500));
+    }
+};
+
 export const createProduct = async (req, res, next) => {
     try {
         const product = await productService.createProduct(req.body);

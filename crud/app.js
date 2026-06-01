@@ -21,6 +21,7 @@ import compression from "compression";
 import { requestId } from "./src/middlewares/requestId.middleware.js";
 import metricsRouter from "./src/routes/metricsRouter.js"
 import debugRouter from "./src/routes/debugRouter.js"
+import docsRouter from "./src/routes/docsRouter.js"
 
 // config()
 const app = express()
@@ -30,7 +31,11 @@ app.use(requestId)
 app.use(requestLogger);
 app.use(cacheControl)
 app.use("/metrics", metricsRouter)
-app.use("/api/debug", debugRouter)
+if(!env.isProd){
+    app.use("/api/debug", debugRouter)
+    app.use("/api/docs", docsRouter)
+}
+
 
 //HandleBars Config
 app.engine("handlebars", engine({
