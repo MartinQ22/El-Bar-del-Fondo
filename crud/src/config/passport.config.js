@@ -6,6 +6,7 @@ import { Strategy as GitHubStrategy } from "passport-github2";
 import { Strategy as JWTStrategy, ExtractJwt } from "passport-jwt";
 import { createHash, isValidPassword } from "../../utils.js";
 import { env } from "./enviroment.js";
+import { errorResponse } from "../utils/apiResponse.utils.js";
 
 const userService = new UserService();
 
@@ -133,7 +134,8 @@ export function passportCall() {
         passport.authenticate("jwt", (err, user, info) => {
             if (err) return next(err)
             if (!user) {
-                return res.status(401).json({ error: (info && info.message) ? info.message : info.toString() })
+                const message = (info && info.message) ? info.message : (info ? info.toString() : "No autorizado");
+                return errorResponse(res, { statusCode: 401, message });
             }
             req.user = user;
             next()

@@ -1,8 +1,10 @@
+import { errorResponse } from "../utils/apiResponse.utils.js";
+
 export function errorHandler(err, req, res, next){
     const statusCode = err.statusCode || 500;
 
-    return res.status(statusCode).json({
-        status: "error",
-        message: err.message || "Internal server error"
-    })
+    return errorResponse(res, {
+        statusCode,
+        message: err.message
+    });
 };
