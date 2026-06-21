@@ -49,15 +49,15 @@ export class UserService {
         return await usersDao.getUserByEmail(email);
     }
 
-     async getUserById(id) {
-         return await usersDao.getUserById(id);
-     }
+    async getUserById(id) {
+        return await usersDao.getUserById(id);
+    }
 
     async deleteUser(email) {
         return await usersDao.deleteUserByEmail(email);
     }
 
-      async deleteUserById(id) {
+    async deleteUserById(id) {
         return await usersDao.deleteUserById(id);
-     }
+    }
 }

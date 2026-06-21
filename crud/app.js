@@ -3,7 +3,7 @@ import { engine } from "express-handlebars"
 import usersRouter from "./src/routes/usersRouter.js"
 import productsRouter from "./src/routes/productsRouter.js"
 import cartRouter from "./src/routes/cartRouter.js";
-import sessionsRouter from "./src/routes/sessionsRouter.js"
+import authRouter from "./src/routes/authRouter.js"
 import mailingRouter from "./src/routes/mailingRouter.js"
 import viewsRouter from "./src/routes/viewsRouter.js"
 import { serverRoot } from "./utils.js"
@@ -73,11 +73,11 @@ app.use(passport.session())
 
 //Endpoints Handlers
 app.use("/api/users", usersRouter);
-app.use("/api/sessions", sessionsRouter)
 app.use("/api/carts", cartRouter);
 app.use("/api/products", productsRouter);
 app.use("/mail", mailingRouter)
 app.use("/api/health", healthRouter)
+app.use("/api", authRouter)
 app.use("/", viewsRouter)
 
 //Error Handler

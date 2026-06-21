@@ -18,14 +18,19 @@ export const swaggerSpec = swaggerJSDoc({
             description: "Servidor Local"
         }],
         components:{
+
+            securitySchemes: {
+                bearerAuth: {
+                    type: 'http',
+                    scheme: 'bearer',
+                    bearerFormat: 'JWT'
+                }
+            },
+
             schemas: {
                 Product: {
                     type: "object",
                     properties: {
-                        thumbnail: {
-                            type: "string",
-                            example: "https://cdn11.bigcommerce.com/s-k28u1tc9ki/products/163/images/768/P3R-DeskpadV3-Thumbnail__17004.1701131823.386.513.png?c=1"
-                        },
                         _id: {
                             type: "string",
                             example: "68ecb6f99407b0e3e0bf3096"
@@ -34,9 +39,21 @@ export const swaggerSpec = swaggerJSDoc({
                             type: "string",
                             example: "MOUSE PERSONA 3"
                         },
+                        description: {
+                            type: "string",
+                            example: "Mouse themed after Persona 3 Reload"
+                        },
+                        thumbnail: {
+                            type: "string",
+                            example: "https://cdn11.bigcommerce.com/s-k28u1tc9ki/products/163/images/768/P3R-DeskpadV3-Thumbnail__17004.1701131823.386.513.png?c=1"
+                        },
+                        code: {
+                            type: "string",
+                            example: "CODIGO1"
+                        },
                         price: {
                             type: "number",
-                            example: "20.24"
+                            example: 20.24
                         },
                         category: {
                             type: "string",
@@ -44,14 +61,15 @@ export const swaggerSpec = swaggerJSDoc({
                         },
                         stock: {
                             type: "number",
-                            example: "10"
+                            example: 10
                         },
                         status: {
                             type: "boolean",
-                            example: "true"
+                            example: true
                         },
                         created_at: {
-                            type: "date",
+                            type: "string",
+                            format: "date-time",
                             example: "2025-10-13T08:21:09.050Z"
                         }
                     }
@@ -65,12 +83,49 @@ export const swaggerSpec = swaggerJSDoc({
                         },
                         message: {
                             type: "string",
-                            example: "Lista de Productos"
+                            example: "Lista de productos"
                         },
                         payload: {
-                            type: "array",
-                            items: {
-                                $ref: "#/components/schemas/Product"
+                            type: "object",
+                            properties: {
+                                products: {
+                                    type: "array",
+                                    items: {
+                                        $ref: "#/components/schemas/Product"
+                                    }
+                                },
+                                totalDocs: {
+                                    type: "number",
+                                    example: 50
+                                },
+                                limit: {
+                                    type: "number",
+                                    example: 10
+                                },
+                                page: {
+                                    type: "number",
+                                    example: 1
+                                },
+                                totalPages: {
+                                    type: "number",
+                                    example: 5
+                                },
+                                hasPrevPage: {
+                                    type: "boolean",
+                                    example: false
+                                },
+                                hasNextPage: {
+                                    type: "boolean",
+                                    example: true
+                                },
+                                prevPage: {
+                                    type: "number",
+                                    example: null
+                                },
+                                nextPage: {
+                                    type: "number",
+                                    example: 2
+                                }
                             }
                         }
                     }
@@ -84,10 +139,9 @@ export const swaggerSpec = swaggerJSDoc({
                         },
                         message: {
                             type: "string",
-                            example: "Lista de Productos"
+                            example: "Producto encontrado"
                         },
                         payload: {
-                            type: "object",
                             $ref: "#/components/schemas/Product"     
                         }
                     }
@@ -118,7 +172,7 @@ export const swaggerSpec = swaggerJSDoc({
                        },
                        price: {
                         type: "number",
-                        example: "20.24"
+                        example: 20.24
                        },
                        code: {
                         type: "string",
@@ -126,7 +180,7 @@ export const swaggerSpec = swaggerJSDoc({
                        },
                        stock: {
                         type: "number",
-                        example: "10"
+                        example: 10
                        },
                        category: {
                         type: "string",

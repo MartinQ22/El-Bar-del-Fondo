@@ -1,7 +1,6 @@
 import express from "express";
 import { getProducts, getProductById, createProduct, updateProduct, deleteProduct } from "../controllers/products.controller.js";
-import { isAdmin } from "../middlewares/auth.middleware.js";
-import { passportCall } from "../config/passport.config.js";
+import { authenticate, authorizeAdmin } from "../middlewares/auth.middleware.js";
 
 const productsRouter = express.Router();
 
@@ -62,7 +61,7 @@ productsRouter.get("/:pid", getProductById);
  *                          $ref: "#/components/schemas/ErrorResponse"
  */
 // Crear producto
-productsRouter.post("/", passportCall(), isAdmin, createProduct);
+productsRouter.post("/", authenticate, authorizeAdmin, createProduct);
 /**
  * @swagger
  * /api/products:
@@ -71,6 +70,8 @@ productsRouter.post("/", passportCall(), isAdmin, createProduct);
  *      description: Crea un nuevo producto
  *      tags: 
  *          - Products
+ *      security:
+ *          - bearerAuth: []
  *      requestBody:
  *          required: true
  *          content:
@@ -84,6 +85,18 @@ productsRouter.post("/", passportCall(), isAdmin, createProduct);
  *                  application/json:
  *                      schema:
  *                          $ref: "#/components/schemas/ProductResponse"
+ *          401:
+ *              description: Token is required
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ErrorResponse'
+ *          403:
+ *              description: Forbidden
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ErrorResponse'
  *          500:
  *              description: Error al crear el producto
  *              content:
@@ -92,7 +105,7 @@ productsRouter.post("/", passportCall(), isAdmin, createProduct);
  *                          $ref: "#/components/schemas/ErrorResponse"
  */
 //Modificar Producto
-productsRouter.put("/:pid", passportCall(), isAdmin, updateProduct);
+productsRouter.put("/:pid", authenticate, authorizeAdmin, updateProduct);
 /**
  * @swagger
  * /api/products/{pid}:
@@ -101,6 +114,8 @@ productsRouter.put("/:pid", passportCall(), isAdmin, updateProduct);
  *      description: Modifica un producto existente por su ID
  *      tags: 
  *          - Products
+ *      security:
+ *          - bearerAuth: []
  *      parameters:
  *        - in: path
  *          name: pid
@@ -122,6 +137,18 @@ productsRouter.put("/:pid", passportCall(), isAdmin, updateProduct);
  *                  application/json:
  *                      schema:
  *                          $ref: "#/components/schemas/ProductResponse"
+ *          401:
+ *              description: Token is required
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ErrorResponse'
+ *          403:
+ *              description: Forbidden
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ErrorResponse'
  *          404:
  *              description: Error al encontrar el producto
  *              content:
@@ -137,7 +164,7 @@ productsRouter.put("/:pid", passportCall(), isAdmin, updateProduct);
  */
 
 //Borrar Producto
-productsRouter.delete("/:pid", passportCall(), isAdmin, deleteProduct);
+productsRouter.delete("/:pid", authenticate, authorizeAdmin, deleteProduct);
 /**
  * @swagger
  * /api/products/{pid}:
@@ -146,6 +173,8 @@ productsRouter.delete("/:pid", passportCall(), isAdmin, deleteProduct);
  *      description: Elimina un producto por su ID
  *      tags: 
  *          - Products
+ *      security:
+ *          - bearerAuth: []
  *      parameters:
  *        - in: path
  *          name: pid
@@ -161,6 +190,18 @@ productsRouter.delete("/:pid", passportCall(), isAdmin, deleteProduct);
  *                  application/json:
  *                      schema:
  *                          $ref: "#/components/schemas/ProductResponse"
+ *          401:
+ *              description: Token is required
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ErrorResponse'
+ *          403:
+ *              description: Forbidden
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ErrorResponse'
  *          404:
  *              description: Error al encontrar el producto
  *              content:

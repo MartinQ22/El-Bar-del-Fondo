@@ -13,7 +13,7 @@ export const register = async (req, res, next) => {
             return successResponse(res, { message: "Sesión ya activa", payload: { redirect: "/profile" } });
         }
 
-        // Check if user already exists
+        // Si el user ya existe
         const existingUser = await userModel.findOne({ email });
         if (existingUser) {
             return next(createError("El email ya está registrado", 400));
@@ -55,6 +55,10 @@ export const register = async (req, res, next) => {
 export const login = async (req, res, next) => {
     const { email, password } = req.body;
     try {
+        if (!email || !password) {
+            return next(createError("El email y la contraseña son requeridos", 400));
+        }
+
         if (email === env.ADMIN_USER && password === env.ADMIN_PASS) {
             const adminUser = {
                 _id: "admin_id",
@@ -75,12 +79,24 @@ export const login = async (req, res, next) => {
             });
 
             req.session.user = adminUser;
-            return res.status(200).redirect("/profile");
+            return successResponse(res, {
+                message: "Login exitoso",
+                payload: {
+                    token,
+                    user: {
+                        id: adminUser._id,
+                        first_name: adminUser.first_name,
+                        last_name: adminUser.last_name,
+                        email: adminUser.email,
+                        role: adminUser.role,
+                    }
+                }
+            });
         }
 
         const user = await userModel.findOne({ email })
         if (!user) {
-            return next(createError("Usuario no encontrado", 401));
+            return next(createError("Credenciales inválidas", 401));
         }
         if (isValidPassword(password, user.password)) {
             // Generar JWT token
@@ -95,9 +111,21 @@ export const login = async (req, res, next) => {
             });
 
             req.session.user = user
-            return res.status(200).redirect("/profile");
+            return successResponse(res, {
+                message: "Login exitoso",
+                payload: {
+                    token,
+                    user: {
+                        id: user._id.toString(),
+                        first_name: user.first_name,
+                        last_name: user.last_name,
+                        email: user.email,
+                        role: user.role,
+                    }
+                }
+            });
         } else {
-            return next(createError("No se puede loguear, intentelo nuevamente", 403));
+            return next(createError("Credenciales inválidas", 401));
         }
     } catch (error) {
         console.error(error.message);
@@ -120,7 +148,6 @@ export const githubCallback = async (req, res) => {
     req.session.user = req.user;
     res.redirect("/profile");
 };
-
 
 //Password RESET
 export const resetPassword = async (req, res, next) => {
@@ -198,4 +225,3 @@ export const logout = (req, res, next) => {
         return res.redirect("/login");
     });
 };
-

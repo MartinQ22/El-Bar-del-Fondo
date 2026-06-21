@@ -67,7 +67,7 @@ export function initializePassport() {
     passport.use("github", new GitHubStrategy({
         clientID: env.GITHUB_CLIENT_ID,
         clientSecret: env.GITHUB_CLIENT_SECRET,
-        callbackURL: `${env.BASE_URL}/api/sessions/githubcallback`
+        callbackURL: `${env.BASE_URL}/api/githubcallback`
     }, async (accessToken, refreshToken, profile, done) => {
         try {
             const email = profile.emails?.[0]?.value || `${profile.username}@github.com`;

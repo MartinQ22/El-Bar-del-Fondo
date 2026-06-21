@@ -1,11 +1,10 @@
 import { logger } from "../utils/logger.utils.js";
 import { requestCounter, requestDuration } from "../utils/metrics.utils.js";
 
-function getLogLevel(statusCode){
-    if (statusCode >= 500) return "error"
-    if (statusCode >= 400 && statusCode < 500) return "error"
-    if (statusCode >= 300 && statusCode < 400) return "warn"
-    if (statusCode >= 200 && statusCode < 300) return "info"
+export function getLogLevel(statusCode){
+    if (statusCode >= 500) return "error";
+    if (statusCode >= 400 && statusCode < 500) return "warn";
+    return "info";
 }
 
 export function requestLogger(req, res, next) {
