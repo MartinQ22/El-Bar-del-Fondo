@@ -31,9 +31,11 @@ app.use(requestId)
 app.use(requestLogger);
 app.use(cacheControl)
 app.use("/metrics", metricsRouter)
+//Portfolio MODE
+app.use("/api/docs", docsRouter)
+
 if(!env.isProd){
     app.use("/api/debug", debugRouter)
-    app.use("/api/docs", docsRouter)
 }
 
 

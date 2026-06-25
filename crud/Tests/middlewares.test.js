@@ -211,3 +211,56 @@ describe("auth middlewares", () => {
         });
     });
 });
+
+import handleSession, { avoidLoginView } from "../src/middlewares/sessions.middlewares.js";
+
+describe("sessions middlewares", () => {
+    describe("handleSession", () => {
+        test("Deberia llamar a next si existe usuario en la sesion", () => {
+            const req = { session: { user: { name: "Test" } } };
+            const res = { redirect: jest.fn() };
+            const next = jest.fn();
+
+            handleSession(req, res, next);
+
+            expect(next).toHaveBeenCalled();
+            expect(res.redirect).not.toHaveBeenCalled();
+        });
+
+        test("Deberia redirigir a /login si no existe usuario en la sesion", () => {
+            const req = { session: {} };
+            const res = { redirect: jest.fn() };
+            const next = jest.fn();
+
+            handleSession(req, res, next);
+
+            expect(next).not.toHaveBeenCalled();
+            expect(res.redirect).toHaveBeenCalledWith("/login");
+        });
+    });
+
+    describe("avoidLoginView", () => {
+        test("Deberia llamar a next si no existe usuario en la sesion", () => {
+            const req = { session: {} };
+            const res = { redirect: jest.fn() };
+            const next = jest.fn();
+
+            avoidLoginView(req, res, next);
+
+            expect(next).toHaveBeenCalled();
+            expect(res.redirect).not.toHaveBeenCalled();
+        });
+
+        test("Deberia redirigir a /profile si existe usuario en la sesion", () => {
+            const req = { session: { user: { name: "Test" } } };
+            const res = { redirect: jest.fn() };
+            const next = jest.fn();
+
+            avoidLoginView(req, res, next);
+
+            expect(next).not.toHaveBeenCalled();
+            expect(res.redirect).toHaveBeenCalledWith("/profile");
+        });
+    });
+});
+

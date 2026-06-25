@@ -58,6 +58,8 @@ export class UserService {
     }
 
     async deleteUserById(id) {
-        return await usersDao.deleteUserById(id);
+        return await usersDao.deleteUser(id);
     }
 }
+
+

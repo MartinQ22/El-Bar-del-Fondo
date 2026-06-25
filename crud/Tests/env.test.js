@@ -1,6 +1,14 @@
 import { jest } from '@jest/globals';
 
+jest.unstable_mockModule('dotenv', () => ({
+  config: () => {},
+  default: {
+    config: () => {}
+  }
+}));
+
 const originalEnv = process.env;
+
 
 //Esta función nos permite cargar env.js con distintas variables de entorno.
 async function loadEnv(customEnv = {}, keysToDelete = []) {
@@ -65,4 +73,34 @@ describe('env config', () => {
     expect(env.workers).toBe(4);
   });
 
-});
+  test('debería usar fallbacks para variables no provistas', async () => {
+    const env = await loadEnv({}, ['BASE_URL', 'CLUSTER_WORKERS', 'NODE_ENV', 'Tienda', 'TIENDA', 'MAINTENANCE']);
+
+    expect(env.BASE_URL).toBe('http://localhost:8080');
+    expect(env.workers).toBe(2);
+    expect(env.NODE_ENV).toBe('development');
+    expect(env.TIENDA).toBe('Tienda El Bar del Fondo');
+    expect(env.MAINTENANCE).toBe(false);
+  });
+
+  test('debería preferir Tienda sobre TIENDA', async () => {
+    const env = await loadEnv({ Tienda: 'Tienda Custom', TIENDA: 'TIENDA UPPER' });
+    expect(env.TIENDA).toBe('Tienda Custom');
+  });
+
+  test('debería usar TIENDA si Tienda no está definida', async () => {
+    const env = await loadEnv({ TIENDA: 'TIENDA ONLY' }, ['Tienda']);
+    expect(env.TIENDA).toBe('TIENDA ONLY');
+  });
+
+  test('debería limpiar comillas simples y dobles de las variables de entorno', async () => {
+    const env = await loadEnv({ 
+      PORT: '"9090"',
+      BASE_URL: "'http://custom-url.com'"
+    });
+
+    expect(env.port).toBe(9090);
+    expect(env.BASE_URL).toBe('http://custom-url.com');
+  });
+
+});
