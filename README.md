@@ -133,8 +133,6 @@ Se desarrollaron pruebas funcionales e integrales utilizando **Jest** y **Supert
 
 ### Código de los tests
 
-### Código de los tests
-
 1. **`users.test.js`**
 
 <details>
@@ -489,7 +487,6 @@ Ran all test suites matching Tests/carts.test.js.
         at runTestInternal (C:\Users\Tincho\Desktop\El Bar del Fondo\node_modules\jest-runner\build\index.js:276:16)
         at runTest (C:\Users\Tincho\Desktop\El Bar del Fondo\node_modules\jest-runner\build\index.js:344:7)
 
-    
 
       at crud/src/controllers/auth.controller.js:251:15
       at Object.cb (crud/Tests/auth.test.js:274:63)
@@ -546,7 +543,6 @@ Ran all test suites matching Tests/carts.test.js.
       √ passportCall - Error next(err) (2 ms)
       √ passportCall - !user sin info.message
       √ passportCall - !user sin info object (2 ms)
-
 Test Suites: 1 passed, 1 total
 Tests:       45 passed, 45 total
 Snapshots:   0 total
@@ -559,7 +555,9 @@ Ran all test suites matching Tests/auth.test.js.
 
 <details>
 <summary>▶️ Ver logs de ejecución de todos los tests (86 passed)</summary>
+
 ```text
+
 $ npm run test
 
 > el-bar-del-fondo@1.0.0 test
@@ -1107,16 +1105,13 @@ $ docker build -t martinquiroga/el-bar-del-fondo:1.0.0 .
 `martinquiroga/el-bar-del-fondo:1.0.0`
 
 ### Evidencia de construcción
-*(Incluido en los logs de construcción del paso anterior, o puedes pegar capturas de Docker Desktop).*
+Docker buildeado y pusheado:
+<img width="1457" height="692" alt="Docker-evidenciaDeExecucion" src="https://github.com/user-attachments/assets/954184d9-b4c8-4a22-9a2a-b69361ded2e6" />
 
 ### Evidencia de ejecución del contenedor
-> [!IMPORTANT]
-> *Levanta el contenedor y pega los logs de inicio (donde dice que el servidor se conectó a MongoDB y está escuchando en el puerto).*
 
-```text
-[INSERTAR LOGS DE "Server running on port 8080" y "MongoDB connected"]
-```
-
+Docker servidor conectado a MongoDB y escuchando puerto:
+<img width="1001" height="362" alt="Captura de pantalla - DockerHub - Log de run exitosa con conexion a moongose" src="https://github.com/user-attachments/assets/28261369-be9b-4d52-9816-6d4b99446539" />
 ---
 
 ## 5. Ejecución del proyecto (Instrucciones)
@@ -1160,9 +1155,38 @@ docker run -d -p 8080:8080 --name el-bar-del-fondo \
 *(Nota: también puedes usar `--env-file .env` si prefieres tener todas las variables en un archivo local en lugar de inyectarlas una por una con `-e`).*
 
 ### Evidencia de ejecución exitosa
-> [!IMPORTANT]
-> *Insertar capturas de Postman o el navegador haciendo un GET a alguna ruta de tu API corriendo desde Docker.*
 
-```text
-[INSERTAR ACA CAPTURA DE PANTALLA]
-```
+Imagen subida a DockerHUB
+> 
+> <img width="1852" height="957" alt="Captura de pantalla - DockerHub - Interfaz del proyecto" src="https://github.com/user-attachments/assets/596c5efd-1f7d-46a3-8910-52d44443eac0" />
+
+
+Imagen de docker funcionando live localmente
+
+> <img width="1722" height="687" alt="Docker-runImage" src="https://github.com/user-attachments/assets/85814303-d6f9-4933-9c1f-ed382d3d2f17" />
+
+
+Endpoint GET para obtener productos - Exitosa
+
+> <img width="901" height="902" alt="Postman-getProducts" src="https://github.com/user-attachments/assets/af61a9cc-df0d-48a3-bac6-f24f69de335f" />
+
+
+Endpoint de login con credenciales de administrador - Exitosa
+
+> <img width="901" height="717" alt="Postman-loginAdmin" src="https://github.com/user-attachments/assets/e9b4b0e3-7edd-4160-90df-8d55d0551598" />
+
+
+Endpoint POST para subir product con credenciales de usuario -Example Error 401
+
+> <img width="905" height="697" alt="Postman-subirProductError(noAdminToken)" src="https://github.com/user-attachments/assets/f850df96-2b29-4b9d-8aea-56982d0f043b" />
+
+
+Endpoint POST para subir product con credenciales de admin -Exitosa
+
+> <img width="907" height="792" alt="Postman-subirProductSuccess" src="https://github.com/user-attachments/assets/a6f2c35f-60b7-45a3-9992-8d2b2e94a914" />
+
+
+
+
+
+
