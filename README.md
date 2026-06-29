@@ -554,7 +554,7 @@ Ran all test suites matching Tests/auth.test.js.
 ### Evidencia de ejecución de los tests
 
 <details>
-<summary>▶️ Ver logs de ejecución de todos los tests (86 passed)</summary>
+<summary>▶️ Ver logs de ejecución de todos los tests (171 passed)</summary>
 
 ```text
 
