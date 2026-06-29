@@ -1154,6 +1154,10 @@ docker run -d -p 8080:8080 --name el-bar-del-fondo \
 ```
 *(Nota: también puedes usar `--env-file .env` si prefieres tener todas las variables en un archivo local en lugar de inyectarlas una por una con `-e`).*
 
+```bash
+docker run -d -p 8080:8080 --name el-bar-del-fondo --env-file .env tu-nombre/el-bar-del-fondo:1.0.0
+```
+
 ### Evidencia de ejecución exitosa
 
 Imagen subida a DockerHUB
