@@ -10,7 +10,7 @@ export function authenticate(req, res, next) {
         return next(createError('Token is required', 401));
     }
 
-    // Bearer jasdkk1123123123
+    // Bearer 
     const [type, token] = authHeader.split(' ');
 
     if (type !== 'Bearer' || !token) {

@@ -22,7 +22,7 @@ router.post("/register", register)
  *              content:
  *                  application/json:
  *                      schema:
- *                          $ref: "#/components/schemas/ErrorResponse"
+ *                          $ref: "#/components/schemas/UserResponse"
  *          409:
  *              description: Usuario ya registrado
  *              content:
@@ -51,7 +51,7 @@ router.post("/login", login)
  *              content:
  *                  application/json:
  *                      schema:
- *                          $ref: "#/components/schemas/ErrorResponse"
+ *                          $ref: "#/components/schemas/UserResponse"
  *          401:
  *              description: Credenciales inválidas
  *              content:
@@ -103,7 +103,7 @@ router.post("/reset-password", resetPassword);
  *              content:
  *                  application/json:
  *                      schema:
- *                          $ref: "#/components/schemas/ErrorResponse"
+ *                          $ref: "#/components/schemas/UserResponse"
  *          500:
  *              description: Error interno del servidor
  *              content:
@@ -119,22 +119,12 @@ router.get("/github", passport.authenticate("github", { scope: ["user:email"] })
  * /api/github:
  *  get:
  *      summary: Iniciar sesión con GitHub
- *      description: Inicia sesión con GitHub
+ *      description: Redirige a GitHub para iniciar sesión
  *      tags: 
  *          - Authentication
  *      responses: 
- *          200:
- *              description: Sesión iniciada correctamente
- *              content:
- *                  application/json:
- *                      schema:
- *                          $ref: "#/components/schemas/ErrorResponse"
- *          500:
- *              description: Error interno del servidor
- *              content:
- *                  application/json:
- *                      schema:
- *                          $ref: "#/components/schemas/ErrorResponse"
+ *          302:
+ *              description: Redirección exitosa hacia GitHub login o fallo
  */
 router.get("/githubcallback",
     passport.authenticate("github", { failureRedirect: "/login" }),
@@ -145,28 +135,12 @@ router.get("/githubcallback",
  * /api/githubcallback:
  *  get:
  *      summary: Callback de GitHub
- *      description: Callback de GitHub
+ *      description: Recibe la respuesta de GitHub y gestiona la sesión, redirigiendo a la ruta principal
  *      tags: 
  *          - Authentication
  *      responses: 
- *          200:
- *              description: Sesión iniciada correctamente
- *              content:
- *                  application/json:
- *                      schema:
- *                          $ref: "#/components/schemas/ErrorResponse"
- *          401:
- *              description: Credenciales inválidas
- *              content:
- *                  application/json:
- *                      schema:
- *                          $ref: "#/components/schemas/ErrorResponse"
- *          500:
- *              description: Error interno del servidor
- *              content:
- *                  application/json:
- *                      schema:
- *                          $ref: "#/components/schemas/ErrorResponse"
+ *          302:
+ *              description: Redirección exitosa o fallida
  */
 
 // Ruta current para validar al usuario logueado y devuelve datos asociados al JWT
@@ -188,7 +162,7 @@ router.get("/current",
  *              content:
  *                  application/json:
  *                      schema:
- *                          $ref: "#/components/schemas/ErrorResponse"
+ *                          $ref: "#/components/schemas/UserResponse"
  *          401:
  *              description: Credenciales inválidas
  *              content:

@@ -39,6 +39,10 @@ export const createProduct = async (req, res, next) => {
         const product = await productService.createProduct(req.body);
         return successResponse(res, { statusCode: 201, message: "Producto creado", payload: product });
     } catch (error) {
+        if (error.code === 11000) {
+            return next(createError("Error al crear el producto: El código (code) ya existe", 400));
+        }
+        console.error("Error in createProduct:", error);
         return next(createError("Error al crear el producto", 500));
     }
 };

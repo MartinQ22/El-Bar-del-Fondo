@@ -192,6 +192,80 @@ export const swaggerSpec = swaggerJSDoc({
                        }
                     },
                     required: ["title", "price", "code", "stock", "description", "category"]
+                },
+                User: {
+                    type: "object",
+                    properties: {
+                        first_name: {
+                            type: "string",
+                            example: "Gasti"
+                        },
+                        email: {
+                            type: "string",
+                            example: "Gasti@ejemplo.com"
+                        },
+                        role: {
+                            type: "string",
+                            example: "user"
+                        }
+                    }
+                },
+                UserResponse: {
+                    type: "object",
+                    properties: {
+                        status: {
+                            type: "string",
+                            example: "success"
+                        },
+                        message: {
+                            type: "string",
+                            example: "Operación realizada correctamente"
+                        },
+                        payload: {
+                            $ref: "#/components/schemas/User"
+                        }
+                    }
+                },
+                Cart: {
+                    type: "object",
+                    properties: {
+                        _id: {
+                            type: "string",
+                            example: "6a3d076e82047a1d9a1f48ce"
+                        },
+                        products: {
+                            type: "array",
+                            items: {
+                                type: "object",
+                                properties: {
+                                    product: {
+                                        type: "string",
+                                        example: "68ecb6f99407b0e3e0bf3096"
+                                    },
+                                    quantity: {
+                                        type: "number",
+                                        example: 2
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                CartResponse: {
+                    type: "object",
+                    properties: {
+                        status: {
+                            type: "string",
+                            example: "success"
+                        },
+                        message: {
+                            type: "string",
+                            example: "Operación exitosa"
+                        },
+                        payload: {
+                            $ref: "#/components/schemas/Cart"
+                        }
+                    }
                 }
             }
         }
