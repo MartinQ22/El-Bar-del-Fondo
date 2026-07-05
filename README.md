@@ -1037,21 +1037,20 @@ $ npm run test
 ## 3. Dockerización
 ### Dockerfile optimizado
 El proyecto cuenta con un `Dockerfile` configurado para producción.
-> [!NOTE]
-> *Dockerfile estructura base (pegar aca para la entrega):*
+
 ```dockerfile
-FROM node:18-alpine
+FROM node:22-alpine
 # Crear directorio de la app
-WORKDIR /usr/src/app
+WORKDIR /app
 # Instalar dependencias (aprovechar cache copiando package.json primero)
 COPY package*.json ./
-RUN npm install --omit=dev
+RUN npm ci --omit=dev
 # Copiar el código fuente
 COPY . .
 # Exponer el puerto
 EXPOSE 8080
 # Comando para iniciar la aplicación
-CMD ["npm", "start"]
+CMD [ "npm", "run", "start" ]
 ```
 
 ### Decisiones de optimización:
